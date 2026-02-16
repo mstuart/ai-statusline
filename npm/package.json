@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "A high-performance, customizable status line for Claude Code CLI",
   "license": "MIT",
-  "repository": "https://github.com/mstuart/claudeline",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mstuart/claudeline.git"
+  },
   "keywords": [
     "claude-code",
     "statusline",
