@@ -1,7 +1,7 @@
-use claudeline::config::Config;
-use claudeline::layout::LayoutEngine;
-use claudeline::render::Renderer;
-use claudeline::widgets::{SessionData, WidgetRegistry};
+use claude_status::config::Config;
+use claude_status::layout::LayoutEngine;
+use claude_status::render::Renderer;
+use claude_status::widgets::{SessionData, WidgetRegistry};
 
 fn render_json(json: &str) -> Vec<String> {
     let data: SessionData = serde_json::from_str(json).expect("Failed to parse JSON");
@@ -164,7 +164,7 @@ fn multiline_config_produces_multiple_lines() {
     let data: SessionData = serde_json::from_str(json).expect("Failed to parse JSON");
 
     // Build a two-line config programmatically since lines is Vec<Vec<LineWidgetConfig>>
-    use claudeline::config::LineWidgetConfig;
+    use claude_status::config::LineWidgetConfig;
     use std::collections::HashMap;
 
     let mut config = Config::default();
@@ -249,7 +249,7 @@ fn renderer_none_produces_no_ansi() {
 fn widget_registry_has_all_expected_widgets() {
     let registry = WidgetRegistry::new();
     let data = SessionData::default();
-    let config = claudeline::widgets::WidgetConfig {
+    let config = claude_status::widgets::WidgetConfig {
         widget_type: String::new(),
         id: "test".into(),
         color: None,
@@ -302,7 +302,7 @@ fn widget_registry_has_all_expected_widgets() {
 
 #[test]
 fn theme_list_has_eleven_themes() {
-    let themes = claudeline::themes::Theme::list();
+    let themes = claude_status::themes::Theme::list();
     assert_eq!(themes.len(), 11);
     assert!(themes.contains(&"default"));
     assert!(themes.contains(&"solarized"));
@@ -319,7 +319,7 @@ fn theme_list_has_eleven_themes() {
 
 #[test]
 fn theme_role_for_widget_returns_color() {
-    let theme = claudeline::themes::Theme::get("dracula");
+    let theme = claude_status::themes::Theme::get("dracula");
     assert!(theme.role_for_widget("model").is_some());
     assert!(theme.role_for_widget("context-percentage").is_some());
     assert!(theme.role_for_widget("git-branch").is_some());
@@ -330,8 +330,8 @@ fn theme_role_for_widget_returns_color() {
 
 #[test]
 fn all_themes_have_required_color_roles() {
-    for name in claudeline::themes::Theme::list() {
-        let theme = claudeline::themes::Theme::get(name);
+    for name in claude_status::themes::Theme::list() {
+        let theme = claude_status::themes::Theme::get(name);
         let roles = [
             "model",
             "context_ok",

@@ -10,7 +10,7 @@ pub struct GitStatusWidget;
 
 fn cache_path(prefix: &str, dir: &str) -> PathBuf {
     let hash: String = dir.bytes().take(8).map(|b| format!("{:02x}", b)).collect();
-    PathBuf::from(format!("/tmp/claudeline-{prefix}-{hash}"))
+    PathBuf::from(format!("/tmp/claude-status-{prefix}-{hash}"))
 }
 
 fn read_cache(path: &PathBuf, max_age_secs: u64) -> Option<String> {

@@ -19,23 +19,23 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            binary: claudeline-linux-x64
+            binary: claude-status-linux-x64
             use_cross: false
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
-            binary: claudeline-linux-arm64
+            binary: claude-status-linux-arm64
             use_cross: true
           - target: x86_64-apple-darwin
             os: macos-latest
-            binary: claudeline-darwin-x64
+            binary: claude-status-darwin-x64
             use_cross: false
           - target: aarch64-apple-darwin
             os: macos-latest
-            binary: claudeline-darwin-arm64
+            binary: claude-status-darwin-arm64
             use_cross: false
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            binary: claudeline-windows-x64.exe
+            binary: claude-status-windows-x64.exe
             use_cross: false
 
     steps:
@@ -60,15 +60,15 @@ jobs:
 
       - name: Strip binary (Linux/macOS)
         if: runner.os != 'Windows'
-        run: strip target/${{ matrix.target }}/release/claudeline || true
+        run: strip target/${{ matrix.target }}/release/claude-status || true
 
       - name: Rename binary (Linux/macOS)
         if: runner.os != 'Windows'
-        run: cp target/${{ matrix.target }}/release/claudeline ${{ matrix.binary }}
+        run: cp target/${{ matrix.target }}/release/claude-status ${{ matrix.binary }}
 
       - name: Rename binary (Windows)
         if: runner.os == 'Windows'
-        run: cp target/${{ matrix.target }}/release/claudeline.exe ${{ matrix.binary }}
+        run: cp target/${{ matrix.target }}/release/claude-status.exe ${{ matrix.binary }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

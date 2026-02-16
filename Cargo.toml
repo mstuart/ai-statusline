@@ -1,10 +1,10 @@
 [package]
-name = "claudeline"
+name = "claude-status"
 version = "1.0.0"
 edition = "2024"
 description = "A high-performance, customizable status line for Claude Code CLI"
 license = "MIT"
-repository = "https://github.com/mstuart/claudeline"
+repository = "https://github.com/mstuart/claude-status"
 keywords = ["claude-code", "statusline", "terminal", "cli", "developer-tools"]
 categories = ["command-line-utilities", "development-tools"]
 

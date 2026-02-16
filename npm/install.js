@@ -4,9 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const REPO = 'mstuart/claudeline';
+const REPO = 'mstuart/claude-status';
 const BIN_DIR = path.join(__dirname, 'bin');
-const BINARY_NAME = process.platform === 'win32' ? 'claudeline-bin.exe' : 'claudeline-bin';
+const BINARY_NAME = process.platform === 'win32' ? 'claude-status-bin.exe' : 'claude-status-bin';
 const BIN_PATH = path.join(BIN_DIR, BINARY_NAME);
 
 function getPlatform() {
@@ -32,13 +32,13 @@ function getArch() {
 
 function getBinaryName(platform, arch) {
   const ext = platform === 'windows' ? '.exe' : '';
-  return `claudeline-${platform}-${arch}${ext}`;
+  return `claude-status-${platform}-${arch}${ext}`;
 }
 
 function fetch(url) {
   return new Promise((resolve, reject) => {
     const client = url.startsWith('https') ? https : http;
-    client.get(url, { headers: { 'User-Agent': 'claudeline-npm-install' } }, (res) => {
+    client.get(url, { headers: { 'User-Agent': 'claude-status-npm-install' } }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         return fetch(res.headers.location).then(resolve, reject);
       }
@@ -59,7 +59,7 @@ async function install() {
   const binaryName = getBinaryName(platform, arch);
   const url = `https://github.com/${REPO}/releases/latest/download/${binaryName}`;
 
-  console.log(`Downloading claudeline binary for ${platform}-${arch}...`);
+  console.log(`Downloading claude-status binary for ${platform}-${arch}...`);
   console.log(`  ${url}`);
 
   if (!fs.existsSync(BIN_DIR)) {
@@ -73,11 +73,11 @@ async function install() {
     fs.chmodSync(BIN_PATH, 0o755);
   }
 
-  console.log(`claudeline binary installed to ${BIN_PATH}`);
+  console.log(`claude-status binary installed to ${BIN_PATH}`);
 }
 
 install().catch((err) => {
-  console.error('Failed to download claudeline binary.');
+  console.error('Failed to download claude-status binary.');
   console.error(err.message);
   console.error('');
   console.error('You can install manually:');

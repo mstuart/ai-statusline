@@ -1,5 +1,5 @@
-use claudeline::widgets::data::*;
-use claudeline::widgets::{SessionData, WidgetConfig, WidgetRegistry};
+use claude_status::widgets::data::*;
+use claude_status::widgets::{SessionData, WidgetConfig, WidgetRegistry};
 use std::collections::HashMap;
 
 fn mock_session() -> SessionData {

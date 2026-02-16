@@ -374,7 +374,7 @@ fn draw_tabs(f: &mut ratatui::Frame, state: &TuiState, area: Rect) {
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title("claudeline config"),
+                .title("claude-status config"),
         )
         .select(state.active_tab.index())
         .style(Style::default().fg(Color::White))
@@ -502,7 +502,7 @@ fn save_config(config: &Config) {
     let path = Config::default_path().unwrap_or_else(|| {
         dirs::config_dir()
             .unwrap_or_else(|| std::path::PathBuf::from(".config"))
-            .join("claudeline")
+            .join("claude-status")
             .join("config.toml")
     });
 

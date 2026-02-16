@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use clap::Subcommand;
 
-use claudeline::config::{Config, LineWidgetConfig, PowerlineConfig};
-use claudeline::themes::Theme;
+use claude_status::config::{Config, LineWidgetConfig, PowerlineConfig};
+use claude_status::themes::Theme;
 
 #[derive(Subcommand)]
 pub enum Commands {
@@ -38,7 +38,7 @@ pub enum ThemeAction {
 pub fn handle_command(cmd: Commands) {
     match cmd {
         Commands::Config => {
-            if let Err(e) = claudeline::tui::run_tui() {
+            if let Err(e) = claude_status::tui::run_tui() {
                 eprintln!("TUI error: {e}");
             }
         }
@@ -56,7 +56,7 @@ pub fn handle_command(cmd: Commands) {
 fn config_path() -> std::path::PathBuf {
     dirs::config_dir()
         .unwrap_or_else(|| std::path::PathBuf::from(".config"))
-        .join("claudeline")
+        .join("claude-status")
         .join("config.toml")
 }
 
@@ -85,13 +85,13 @@ fn cmd_init() {
     println!();
     println!(r#"  "preferences": {{"#);
     println!(r#"    "statusline": {{"#);
-    println!(r#"      "command": "claudeline""#);
+    println!(r#"      "command": "claude-status""#);
     println!(r#"    }}"#);
     println!(r#"  }}"#);
 }
 
 fn cmd_doctor() {
-    println!("claudeline doctor");
+    println!("claude-status doctor");
     println!("=================");
     println!();
 
@@ -155,7 +155,7 @@ fn cmd_doctor() {
         }
     } else {
         println!(
-            "  - Config: not found at {} (run `claudeline init` to create)",
+            "  - Config: not found at {} (run `claude-status init` to create)",
             cfg_path.display()
         );
     }

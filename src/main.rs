@@ -5,14 +5,14 @@ use clap::Parser;
 
 mod cli;
 
-use claudeline::config::Config;
-use claudeline::layout::LayoutEngine;
-use claudeline::render::Renderer;
-use claudeline::widgets::{SessionData, WidgetRegistry};
+use claude_status::config::Config;
+use claude_status::layout::LayoutEngine;
+use claude_status::render::Renderer;
+use claude_status::widgets::{SessionData, WidgetRegistry};
 
 #[derive(Parser)]
 #[command(
-    name = "claudeline",
+    name = "claude-status",
     version,
     about = "A high-performance status line for Claude Code"
 )]

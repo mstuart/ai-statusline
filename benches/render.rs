@@ -1,10 +1,10 @@
 use criterion::{Criterion, criterion_group, criterion_main};
 
-use claudeline::config::{Config, LineWidgetConfig, PowerlineConfig};
-use claudeline::layout::LayoutEngine;
-use claudeline::render::Renderer;
-use claudeline::widgets::data::*;
-use claudeline::widgets::{SessionData, WidgetRegistry};
+use claude_status::config::{Config, LineWidgetConfig, PowerlineConfig};
+use claude_status::layout::LayoutEngine;
+use claude_status::render::Renderer;
+use claude_status::widgets::data::*;
+use claude_status::widgets::{SessionData, WidgetRegistry};
 use std::collections::HashMap;
 
 fn mock_session() -> SessionData {
@@ -150,7 +150,7 @@ fn bench_json_parsing(c: &mut Criterion) {
 fn bench_single_widget(c: &mut Criterion) {
     let data = mock_session();
     let registry = WidgetRegistry::new();
-    let config = claudeline::widgets::WidgetConfig {
+    let config = claude_status::widgets::WidgetConfig {
         widget_type: "context-percentage".into(),
         id: "bench".into(),
         color: None,

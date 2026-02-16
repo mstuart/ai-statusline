@@ -1,11 +1,11 @@
 {
-  "name": "claudeline",
+  "name": "claude-status",
   "version": "1.0.0",
   "description": "A high-performance, customizable status line for Claude Code CLI",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mstuart/claudeline.git"
+    "url": "git+https://github.com/mstuart/claude-status.git"
   },
   "keywords": [
     "claude-code",
@@ -14,7 +14,7 @@
     "cli"
   ],
   "bin": {
-    "claudeline": "./bin/cli.js"
+    "claude-status": "./bin/cli.js"
   },
   "scripts": {
     "postinstall": "node install.js"

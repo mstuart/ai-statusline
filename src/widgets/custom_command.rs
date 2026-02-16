@@ -12,7 +12,7 @@ fn cache_path(command: &str) -> std::path::PathBuf {
         .take(16)
         .map(|b| format!("{:02x}", b))
         .collect();
-    std::path::PathBuf::from(format!("/tmp/claudeline-cmd-{hash}"))
+    std::path::PathBuf::from(format!("/tmp/claude-status-cmd-{hash}"))
 }
 
 fn read_cache(path: &std::path::Path) -> Option<String> {

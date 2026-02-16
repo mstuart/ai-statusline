@@ -1,4 +1,4 @@
-use claudeline::config::Config;
+use claude_status::config::Config;
 
 #[test]
 fn default_config_has_sensible_values() {

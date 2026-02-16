@@ -163,13 +163,13 @@ impl Config {
     pub fn default_path() -> Option<PathBuf> {
         // Check CLAUDE_CONFIG_DIR first
         if let Ok(dir) = std::env::var("CLAUDE_CONFIG_DIR") {
-            let p = PathBuf::from(dir).join("claudeline").join("config.toml");
+            let p = PathBuf::from(dir).join("claude-status").join("config.toml");
             if p.exists() {
                 return Some(p);
             }
         }
         // XDG config
-        dirs::config_dir().map(|d| d.join("claudeline").join("config.toml"))
+        dirs::config_dir().map(|d| d.join("claude-status").join("config.toml"))
     }
 
     pub fn to_toml(&self) -> String {

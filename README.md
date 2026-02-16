@@ -1,4 +1,4 @@
-# claudeline
+# claude-status
 
 A high-performance, customizable status line for [Claude Code](https://claude.ai/code) CLI.
 
@@ -9,9 +9,9 @@ Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
 📁 my-project | 🌿 main +3 ~2 | +156 -23 | v2.1.31
 ```
 
-## Why claudeline?
+## Why claude-status?
 
-| | claudeline | ccstatusline |
+| | claude-status | ccstatusline |
 |---|---|---|
 | **Language** | Rust (compiled binary) | TypeScript (bunx/npx) |
 | **Render time** | <1ms | ~200ms (npx overhead) |
@@ -29,10 +29,10 @@ Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
 
 ```bash
 # npm (downloads platform binary automatically)
-npm install -g claudeline
+npm install -g claude-status
 
 # Or direct binary
-curl -fsSL https://raw.githubusercontent.com/mstuart/claudeline/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/mstuart/claude-status/main/scripts/install.sh | sh
 
 # Or build from source
 cargo install --path .
@@ -46,7 +46,7 @@ Add to `~/.claude/settings.json`:
 {
   "statusLine": {
     "type": "command",
-    "command": "claudeline"
+    "command": "claude-status"
   }
 }
 ```
@@ -56,10 +56,10 @@ Restart Claude Code. Done.
 ### Apply a preset
 
 ```bash
-claudeline preset full       # Two-line layout with everything
-claudeline preset minimal    # Just model + context %
-claudeline preset powerline  # Full layout with powerline arrows
-claudeline preset compact    # Single line, compact values
+claude-status preset full       # Two-line layout with everything
+claude-status preset minimal    # Just model + context %
+claude-status preset powerline  # Full layout with powerline arrows
+claude-status preset compact    # Single line, compact values
 ```
 
 ## Widgets
@@ -111,10 +111,10 @@ claudeline preset compact    # Single line, compact values
 
 ## Configuration
 
-Config lives at `~/.config/claudeline/config.toml`. Generate a default:
+Config lives at `~/.config/claude-status/config.toml`. Generate a default:
 
 ```bash
-claudeline init
+claude-status init
 ```
 
 ### Example config
@@ -203,15 +203,15 @@ Every widget supports:
 11 built-in themes optimized for popular terminal color schemes:
 
 ```bash
-claudeline theme list    # List all themes
-claudeline theme set nord  # Switch theme
+claude-status theme list    # List all themes
+claude-status theme set nord  # Switch theme
 ```
 
 Available: `default`, `solarized`, `nord`, `dracula`, `gruvbox`, `monokai`, `light`, `high-contrast`, `one-dark`, `tokyo-night`, `catppuccin`
 
 ## Color Support
 
-claudeline auto-detects terminal color capabilities:
+claude-status auto-detects terminal color capabilities:
 
 - **Truecolor** (24-bit): detected via `COLORTERM=truecolor`
 - **256-color**: detected via `TERM=*256color*`
@@ -221,22 +221,22 @@ claudeline auto-detects terminal color capabilities:
 Override with `--color-level`:
 
 ```bash
-claudeline --color-level truecolor
-claudeline --color-level none
+claude-status --color-level truecolor
+claude-status --color-level none
 ```
 
 ## CLI Commands
 
 ```bash
-claudeline              # Render status line (reads JSON from stdin)
-claudeline init         # Generate default config file
-claudeline doctor       # Check environment compatibility
-claudeline theme list   # List available themes
-claudeline theme set <name>  # Switch theme
-claudeline preset <name>     # Apply a preset layout
-claudeline config            # Interactive TUI configurator
-claudeline dump-schema       # Print expected JSON input schema
-claudeline --version         # Show version
+claude-status              # Render status line (reads JSON from stdin)
+claude-status init         # Generate default config file
+claude-status doctor       # Check environment compatibility
+claude-status theme list   # List available themes
+claude-status theme set <name>  # Switch theme
+claude-status preset <name>     # Apply a preset layout
+claude-status config            # Interactive TUI configurator
+claude-status dump-schema       # Print expected JSON input schema
+claude-status --version         # Show version
 ```
 
 ## Performance
@@ -250,23 +250,23 @@ Benchmarked on Apple M1:
 | Memory usage | 1.2 MB |
 | Startup time | <1ms |
 
-Claude Code debounces status line updates at 300ms. claudeline completes in <1ms, ensuring the status line is always fresh and never causes UI lag.
+Claude Code debounces status line updates at 300ms. claude-status completes in <1ms, ensuring the status line is always fresh and never causes UI lag.
 
 ## How It Works
 
-Claude Code pipes JSON session data to your status line script via stdin. claudeline reads this JSON, applies your configuration, and prints formatted ANSI text to stdout. No transcript parsing, no file watching, no external dependencies.
+Claude Code pipes JSON session data to your status line script via stdin. claude-status reads this JSON, applies your configuration, and prints formatted ANSI text to stdout. No transcript parsing, no file watching, no external dependencies.
 
 ```
-Claude Code → JSON stdin → claudeline → ANSI stdout → Terminal
+Claude Code → JSON stdin → claude-status → ANSI stdout → Terminal
 ```
 
 ## Building from Source
 
 ```bash
-git clone https://github.com/mstuart/claudeline
-cd claudeline
+git clone https://github.com/mstuart/claude-status
+cd claude-status
 cargo build --release
-# Binary at ./target/release/claudeline
+# Binary at ./target/release/claude-status
 ```
 
 ## License

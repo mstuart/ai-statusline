@@ -1,43 +1,43 @@
 #!/usr/bin/env sh
 set -e
 
-REPO="mstuart/claudeline"
+REPO="mstuart/claude-status"
 INSTALL_DIR="${CLAUDELINE_INSTALL_DIR:-$HOME/.local/bin}"
 
 main() {
   detect_platform
   detect_arch
 
-  binary="claudeline-${PLATFORM}-${ARCH}"
+  binary="claude-status-${PLATFORM}-${ARCH}"
   url="https://github.com/${REPO}/releases/latest/download/${binary}"
 
-  echo "Downloading claudeline for ${PLATFORM}-${ARCH}..."
+  echo "Downloading claude-status for ${PLATFORM}-${ARCH}..."
   echo "  ${url}"
 
   tmpdir=$(mktemp -d)
   trap "rm -rf ${tmpdir}" EXIT
 
   if command -v curl >/dev/null 2>&1; then
-    curl -fsSL -o "${tmpdir}/claudeline" "${url}"
+    curl -fsSL -o "${tmpdir}/claude-status" "${url}"
   elif command -v wget >/dev/null 2>&1; then
-    wget -qO "${tmpdir}/claudeline" "${url}"
+    wget -qO "${tmpdir}/claude-status" "${url}"
   else
-    echo "Error: curl or wget is required to download claudeline."
+    echo "Error: curl or wget is required to download claude-status."
     exit 1
   fi
 
-  chmod +x "${tmpdir}/claudeline"
+  chmod +x "${tmpdir}/claude-status"
 
   if [ -w "${INSTALL_DIR}" ] || mkdir -p "${INSTALL_DIR}" 2>/dev/null; then
-    cp "${tmpdir}/claudeline" "${INSTALL_DIR}/claudeline"
+    cp "${tmpdir}/claude-status" "${INSTALL_DIR}/claude-status"
   else
     echo "Installing to ${INSTALL_DIR} requires elevated permissions."
     sudo mkdir -p "${INSTALL_DIR}"
-    sudo cp "${tmpdir}/claudeline" "${INSTALL_DIR}/claudeline"
+    sudo cp "${tmpdir}/claude-status" "${INSTALL_DIR}/claude-status"
   fi
 
   echo ""
-  echo "claudeline installed to ${INSTALL_DIR}/claudeline"
+  echo "claude-status installed to ${INSTALL_DIR}/claude-status"
   echo ""
 
   if ! echo "$PATH" | tr ':' '\n' | grep -q "^${INSTALL_DIR}$"; then
@@ -50,7 +50,7 @@ main() {
   echo '  {'
   echo '    "statusLine": {'
   echo '      "type": "command",'
-  echo '      "command": "claudeline"'
+  echo '      "command": "claude-status"'
   echo '    }'
   echo '  }'
 }
