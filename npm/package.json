@@ -1,0 +1,28 @@
+{
+  "name": "claudeline",
+  "version": "0.1.0",
+  "description": "A high-performance, customizable status line for Claude Code CLI",
+  "license": "MIT",
+  "repository": "https://github.com/mstuart/claudeline",
+  "keywords": [
+    "claude-code",
+    "statusline",
+    "terminal",
+    "cli"
+  ],
+  "bin": {
+    "claudeline": "./bin/claudeline"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
+}
