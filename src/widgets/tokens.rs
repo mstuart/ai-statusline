@@ -1,5 +1,5 @@
-use super::traits::{Widget, WidgetConfig, WidgetOutput};
 use super::data::SessionData;
+use super::traits::{Widget, WidgetConfig, WidgetOutput};
 
 fn format_tokens(n: u64, compact: bool) -> String {
     if compact {
@@ -26,12 +26,25 @@ fn format_tokens(n: u64, compact: bool) -> String {
 pub struct TokenInputWidget;
 
 impl Widget for TokenInputWidget {
-    fn name(&self) -> &str { "tokens-input" }
+    fn name(&self) -> &str {
+        "tokens-input"
+    }
 
     fn render(&self, data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
-        let usage = match data.context_window.as_ref().and_then(|cw| cw.current_usage.as_ref()) {
+        let usage = match data
+            .context_window
+            .as_ref()
+            .and_then(|cw| cw.current_usage.as_ref())
+        {
             Some(u) => u,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 55, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 55,
+                    visible: false,
+                };
+            }
         };
 
         let val = usage.input_tokens.unwrap_or(0);
@@ -42,19 +55,37 @@ impl Widget for TokenInputWidget {
         };
 
         let display_width = text.len();
-        WidgetOutput { text, display_width, priority: 55, visible: true }
+        WidgetOutput {
+            text,
+            display_width,
+            priority: 55,
+            visible: true,
+        }
     }
 }
 
 pub struct TokenOutputWidget;
 
 impl Widget for TokenOutputWidget {
-    fn name(&self) -> &str { "tokens-output" }
+    fn name(&self) -> &str {
+        "tokens-output"
+    }
 
     fn render(&self, data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
-        let usage = match data.context_window.as_ref().and_then(|cw| cw.current_usage.as_ref()) {
+        let usage = match data
+            .context_window
+            .as_ref()
+            .and_then(|cw| cw.current_usage.as_ref())
+        {
             Some(u) => u,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 53, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 53,
+                    visible: false,
+                };
+            }
         };
 
         let val = usage.output_tokens.unwrap_or(0);
@@ -65,19 +96,37 @@ impl Widget for TokenOutputWidget {
         };
 
         let display_width = text.len();
-        WidgetOutput { text, display_width, priority: 53, visible: true }
+        WidgetOutput {
+            text,
+            display_width,
+            priority: 53,
+            visible: true,
+        }
     }
 }
 
 pub struct TokenCachedWidget;
 
 impl Widget for TokenCachedWidget {
-    fn name(&self) -> &str { "tokens-cached" }
+    fn name(&self) -> &str {
+        "tokens-cached"
+    }
 
     fn render(&self, data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
-        let usage = match data.context_window.as_ref().and_then(|cw| cw.current_usage.as_ref()) {
+        let usage = match data
+            .context_window
+            .as_ref()
+            .and_then(|cw| cw.current_usage.as_ref())
+        {
             Some(u) => u,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 51, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 51,
+                    visible: false,
+                };
+            }
         };
 
         let val = usage.cache_creation_input_tokens.unwrap_or(0)
@@ -89,19 +138,37 @@ impl Widget for TokenCachedWidget {
         };
 
         let display_width = text.len();
-        WidgetOutput { text, display_width, priority: 51, visible: true }
+        WidgetOutput {
+            text,
+            display_width,
+            priority: 51,
+            visible: true,
+        }
     }
 }
 
 pub struct TokenTotalWidget;
 
 impl Widget for TokenTotalWidget {
-    fn name(&self) -> &str { "tokens-total" }
+    fn name(&self) -> &str {
+        "tokens-total"
+    }
 
     fn render(&self, data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
-        let usage = match data.context_window.as_ref().and_then(|cw| cw.current_usage.as_ref()) {
+        let usage = match data
+            .context_window
+            .as_ref()
+            .and_then(|cw| cw.current_usage.as_ref())
+        {
             Some(u) => u,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 50, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 50,
+                    visible: false,
+                };
+            }
         };
 
         let val = usage.input_tokens.unwrap_or(0)
@@ -115,6 +182,11 @@ impl Widget for TokenTotalWidget {
         };
 
         let display_width = text.len();
-        WidgetOutput { text, display_width, priority: 50, visible: true }
+        WidgetOutput {
+            text,
+            display_width,
+            priority: 50,
+            visible: true,
+        }
     }
 }

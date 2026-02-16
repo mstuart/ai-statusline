@@ -108,9 +108,7 @@ fn cmd_doctor() {
     print_check(true, &format!("Color support: {color_support}"));
 
     // Terminal width
-    let width = crossterm::terminal::size()
-        .map(|(w, _)| w)
-        .unwrap_or(0);
+    let width = crossterm::terminal::size().map(|(w, _)| w).unwrap_or(0);
     print_check(width > 0, &format!("Terminal width: {width} columns"));
 
     // Git availability
@@ -125,12 +123,13 @@ fn cmd_doctor() {
     }
 
     // Nerd Font detection
-    let nerd_hint = std::env::var("NERD_FONT").is_ok()
-        || std::env::var("NERDFONTS").is_ok();
+    let nerd_hint = std::env::var("NERD_FONT").is_ok() || std::env::var("NERDFONTS").is_ok();
     if nerd_hint {
         print_check(true, "Nerd Fonts: detected via env var");
     } else {
-        println!("  ? Nerd Fonts: unknown (set NERD_FONT=1 to confirm, or check your terminal font)");
+        println!(
+            "  ? Nerd Fonts: unknown (set NERD_FONT=1 to confirm, or check your terminal font)"
+        );
     }
 
     // Config file
@@ -140,14 +139,23 @@ fn cmd_doctor() {
         match std::fs::read_to_string(&cfg_path) {
             Ok(contents) => {
                 let valid = toml::from_str::<Config>(&contents).is_ok();
-                print_check(valid, &format!("Config: {} (valid: {})", cfg_path.display(), valid));
+                print_check(
+                    valid,
+                    &format!("Config: {} (valid: {})", cfg_path.display(), valid),
+                );
             }
             Err(e) => {
-                print_check(false, &format!("Config: {} (read error: {e})", cfg_path.display()));
+                print_check(
+                    false,
+                    &format!("Config: {} (read error: {e})", cfg_path.display()),
+                );
             }
         }
     } else {
-        println!("  - Config: not found at {} (run `claudeline init` to create)", cfg_path.display());
+        println!(
+            "  - Config: not found at {} (run `claudeline init` to create)",
+            cfg_path.display()
+        );
     }
 
     println!();
@@ -173,7 +181,10 @@ fn cmd_theme_list() {
 fn cmd_theme_set(name: &str) {
     let available = Theme::list();
     if !available.contains(&name) {
-        eprintln!("Unknown theme '{name}'. Available: {}", available.join(", "));
+        eprintln!(
+            "Unknown theme '{name}'. Available: {}",
+            available.join(", ")
+        );
         return;
     }
 
@@ -251,10 +262,7 @@ fn widget_colored(widget_type: &str, fg: Option<&str>, bg: Option<&str>) -> Line
 
 fn preset_minimal() -> Config {
     Config {
-        lines: vec![vec![
-            widget("model"),
-            widget("context-percentage"),
-        ]],
+        lines: vec![vec![widget("model"), widget("context-percentage")]],
         ..Config::default()
     }
 }

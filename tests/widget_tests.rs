@@ -1,5 +1,5 @@
-use claudeline::widgets::{SessionData, WidgetConfig, WidgetRegistry};
 use claudeline::widgets::data::*;
+use claudeline::widgets::{SessionData, WidgetConfig, WidgetRegistry};
 use std::collections::HashMap;
 
 fn mock_session() -> SessionData {
@@ -7,10 +7,18 @@ fn mock_session() -> SessionData {
         cwd: Some("/Users/test/project".into()),
         session_id: Some("abc12345-def6-7890-ghij-klmn12345678".into()),
         transcript_path: Some("/tmp/transcript.jsonl".into()),
-        model: Some(Model { id: Some("claude-opus-4-6".into()), display_name: Some("Opus".into()) }),
-        workspace: Some(Workspace { current_dir: Some("/Users/test/project".into()), project_dir: Some("/Users/test/project".into()) }),
+        model: Some(Model {
+            id: Some("claude-opus-4-6".into()),
+            display_name: Some("Opus".into()),
+        }),
+        workspace: Some(Workspace {
+            current_dir: Some("/Users/test/project".into()),
+            project_dir: Some("/Users/test/project".into()),
+        }),
         version: Some("2.1.31".into()),
-        output_style: Some(OutputStyle { name: Some("default".into()) }),
+        output_style: Some(OutputStyle {
+            name: Some("default".into()),
+        }),
         cost: Some(Cost {
             total_cost_usd: Some(0.0842),
             total_duration_ms: Some(345000),
@@ -94,7 +102,9 @@ fn context_percentage_renders_percentage() {
     let registry = WidgetRegistry::new();
     let data = mock_session();
     let config = default_config();
-    let output = registry.render("context-percentage", &data, &config).unwrap();
+    let output = registry
+        .render("context-percentage", &data, &config)
+        .unwrap();
     assert!(output.visible);
     assert_eq!(output.text, "42%");
 }
@@ -105,7 +115,9 @@ fn context_percentage_bar_mode() {
     let data = mock_session();
     let mut config = default_config();
     config.metadata.insert("bar".into(), "true".into());
-    let output = registry.render("context-percentage", &data, &config).unwrap();
+    let output = registry
+        .render("context-percentage", &data, &config)
+        .unwrap();
     assert!(output.visible);
     // 42.5% -> round(4.25) = 4 filled, 6 empty
     assert!(output.text.contains("42%"));
@@ -119,7 +131,9 @@ fn context_percentage_inverse_mode() {
     let data = mock_session();
     let mut config = default_config();
     config.metadata.insert("inverse".into(), "true".into());
-    let output = registry.render("context-percentage", &data, &config).unwrap();
+    let output = registry
+        .render("context-percentage", &data, &config)
+        .unwrap();
     assert!(output.visible);
     // 100 - 42.5 = 57.5, truncated to 57
     assert_eq!(output.text, "57%");
@@ -130,7 +144,9 @@ fn context_percentage_invisible_without_data() {
     let registry = WidgetRegistry::new();
     let data = empty_session();
     let config = default_config();
-    let output = registry.render("context-percentage", &data, &config).unwrap();
+    let output = registry
+        .render("context-percentage", &data, &config)
+        .unwrap();
     assert!(!output.visible);
 }
 
@@ -535,7 +551,9 @@ fn vim_mode_invisible_without_vim_data() {
 fn vim_mode_visible_with_vim_data() {
     let registry = WidgetRegistry::new();
     let mut data = mock_session();
-    data.vim = Some(Vim { mode: Some("INSERT".into()) });
+    data.vim = Some(Vim {
+        mode: Some("INSERT".into()),
+    });
     let config = default_config();
     let output = registry.render("vim-mode", &data, &config).unwrap();
     assert!(output.visible);
@@ -568,7 +586,9 @@ fn agent_name_invisible_by_default() {
 fn agent_name_visible_with_agent_data() {
     let registry = WidgetRegistry::new();
     let mut data = mock_session();
-    data.agent = Some(Agent { name: Some("researcher".into()) });
+    data.agent = Some(Agent {
+        name: Some("researcher".into()),
+    });
     let config = default_config();
     let output = registry.render("agent-name", &data, &config).unwrap();
     assert!(output.visible);
@@ -579,7 +599,9 @@ fn agent_name_visible_with_agent_data() {
 fn agent_name_invisible_with_empty_name() {
     let registry = WidgetRegistry::new();
     let mut data = mock_session();
-    data.agent = Some(Agent { name: Some("".into()) });
+    data.agent = Some(Agent {
+        name: Some("".into()),
+    });
     let config = default_config();
     let output = registry.render("agent-name", &data, &config).unwrap();
     assert!(!output.visible);
@@ -712,7 +734,9 @@ fn output_style_invisible_when_default() {
 fn output_style_visible_when_non_default() {
     let registry = WidgetRegistry::new();
     let mut data = mock_session();
-    data.output_style = Some(OutputStyle { name: Some("streaming".into()) });
+    data.output_style = Some(OutputStyle {
+        name: Some("streaming".into()),
+    });
     let config = default_config();
     let output = registry.render("output-style", &data, &config).unwrap();
     assert!(output.visible);

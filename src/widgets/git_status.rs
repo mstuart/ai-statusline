@@ -60,7 +60,7 @@ impl Widget for GitStatusWidget {
                     display_width: 0,
                     priority: 70,
                     visible: false,
-                }
+                };
             }
         };
 

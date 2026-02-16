@@ -52,7 +52,10 @@ fn parse_full_claude_json_into_session_data() {
     }"#;
 
     let data: SessionData = serde_json::from_str(json).expect("Failed to parse JSON");
-    assert_eq!(data.model.as_ref().unwrap().display_name.as_deref(), Some("Opus"));
+    assert_eq!(
+        data.model.as_ref().unwrap().display_name.as_deref(),
+        Some("Opus")
+    );
     assert_eq!(data.version.as_deref(), Some("2.1.31"));
     assert_eq!(data.cost.as_ref().unwrap().total_cost_usd, Some(0.0842));
 }
@@ -72,7 +75,10 @@ fn render_with_default_config_produces_output() {
     }"#;
 
     let lines = render_json(json);
-    assert!(!lines.is_empty(), "Should produce at least one line of output");
+    assert!(
+        !lines.is_empty(),
+        "Should produce at least one line of output"
+    );
     let combined = lines.join("");
     assert!(combined.contains("Opus"));
 }
@@ -203,7 +209,10 @@ fn json_with_unknown_fields_still_parses() {
     }"#;
     // SessionData derives Deserialize with default, unknown fields should be ignored
     let data: SessionData = serde_json::from_str(json).expect("Should parse with unknown fields");
-    assert_eq!(data.model.as_ref().unwrap().display_name.as_deref(), Some("Opus"));
+    assert_eq!(
+        data.model.as_ref().unwrap().display_name.as_deref(),
+        Some("Opus")
+    );
 }
 
 #[test]
@@ -229,7 +238,10 @@ fn renderer_none_produces_no_ansi() {
 
     let lines = render_json(json);
     for line in &lines {
-        assert!(!line.contains("\x1b["), "No ANSI escape codes with color_level=none");
+        assert!(
+            !line.contains("\x1b["),
+            "No ANSI escape codes with color_level=none"
+        );
     }
 }
 
@@ -250,14 +262,32 @@ fn widget_registry_has_all_expected_widgets() {
     };
 
     let expected = [
-        "model", "context-percentage", "context-length",
-        "tokens-input", "tokens-output", "tokens-cached", "tokens-total",
-        "session-cost", "session-duration", "block-timer",
-        "git-branch", "git-status", "git-worktree",
-        "cwd", "lines-changed", "version", "session-id",
-        "vim-mode", "agent-name", "output-style", "exceeds-tokens",
-        "api-duration", "custom-command", "custom-text",
-        "separator", "terminal-width",
+        "model",
+        "context-percentage",
+        "context-length",
+        "tokens-input",
+        "tokens-output",
+        "tokens-cached",
+        "tokens-total",
+        "session-cost",
+        "session-duration",
+        "block-timer",
+        "git-branch",
+        "git-status",
+        "git-worktree",
+        "cwd",
+        "lines-changed",
+        "version",
+        "session-id",
+        "vim-mode",
+        "agent-name",
+        "output-style",
+        "exceeds-tokens",
+        "api-duration",
+        "custom-command",
+        "custom-text",
+        "separator",
+        "terminal-width",
     ];
 
     for name in &expected {

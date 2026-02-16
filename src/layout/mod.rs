@@ -14,7 +14,12 @@ impl<'a> LayoutEngine<'a> {
         Self { config, renderer }
     }
 
-    pub fn render(&self, data: &SessionData, _config: &Config, registry: &WidgetRegistry) -> Vec<String> {
+    pub fn render(
+        &self,
+        data: &SessionData,
+        _config: &Config,
+        registry: &WidgetRegistry,
+    ) -> Vec<String> {
         let config = self.config;
         let term_width = Self::terminal_width(config);
         let mut output_lines = Vec::new();
@@ -47,7 +52,8 @@ impl<'a> LayoutEngine<'a> {
         }
 
         if config.powerline.enabled && config.powerline.auto_align && output_lines.len() > 1 {
-            let max_display_width = output_lines.iter()
+            let max_display_width = output_lines
+                .iter()
                 .map(|l| UnicodeWidthStr::width(strip_ansi(l).as_str()))
                 .max()
                 .unwrap_or(0);
@@ -113,7 +119,8 @@ impl<'a> LayoutEngine<'a> {
 
         // Start cap
         if let Some(ref cap) = config.powerline.start_cap {
-            let first_bg = widgets.first()
+            let first_bg = widgets
+                .first()
                 .and_then(|(_, wc)| wc.background_color.as_deref())
                 .unwrap_or(default_bg);
             let bg_spec = Renderer::parse_color(first_bg);
@@ -132,7 +139,11 @@ impl<'a> LayoutEngine<'a> {
 
             // Powerline separator between widgets (not before first)
             if i > 0 && !widgets[i - 1].1.merge_next {
-                let prev_bg = widgets[i - 1].1.background_color.as_deref().unwrap_or(default_bg);
+                let prev_bg = widgets[i - 1]
+                    .1
+                    .background_color
+                    .as_deref()
+                    .unwrap_or(default_bg);
                 let prev_bg_spec = Renderer::parse_color(prev_bg);
 
                 let sep_width = UnicodeWidthStr::width(pl_sep.as_str());
@@ -166,7 +177,8 @@ impl<'a> LayoutEngine<'a> {
 
         // End cap
         if let Some(ref cap) = config.powerline.end_cap {
-            let last_bg = widgets.last()
+            let last_bg = widgets
+                .last()
                 .and_then(|(_, wc)| wc.background_color.as_deref())
                 .unwrap_or(default_bg);
             let last_bg_spec = Renderer::parse_color(last_bg);
@@ -183,11 +195,7 @@ impl<'a> LayoutEngine<'a> {
         format!("{result}{}", self.renderer.reset())
     }
 
-    fn apply_style(
-        &self,
-        text: &str,
-        wc: &crate::config::LineWidgetConfig,
-    ) -> String {
+    fn apply_style(&self, text: &str, wc: &crate::config::LineWidgetConfig) -> String {
         let config = self.config;
         let mut styled = String::new();
 

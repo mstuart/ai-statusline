@@ -19,7 +19,14 @@ impl Theme {
     }
 
     pub fn list() -> Vec<&'static str> {
-        vec!["default", "solarized", "nord", "dracula", "gruvbox", "monokai"]
+        vec![
+            "default",
+            "solarized",
+            "nord",
+            "dracula",
+            "gruvbox",
+            "monokai",
+        ]
     }
 
     pub fn color(&self, role: &str) -> Option<&str> {

@@ -46,7 +46,7 @@ impl Widget for GitBranchWidget {
                     display_width: 0,
                     priority: 75,
                     visible: false,
-                }
+                };
             }
         };
 

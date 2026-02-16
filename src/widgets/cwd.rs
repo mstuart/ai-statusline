@@ -79,7 +79,7 @@ impl Widget for CwdWidget {
                     display_width: 0,
                     priority: 80,
                     visible: false,
-                }
+                };
             }
         };
 

@@ -1,29 +1,55 @@
-use super::traits::{Widget, WidgetConfig, WidgetOutput};
 use super::data::SessionData;
+use super::traits::{Widget, WidgetConfig, WidgetOutput};
 
 pub struct ContextPercentageWidget;
 
 impl Widget for ContextPercentageWidget {
-    fn name(&self) -> &str { "context-percentage" }
+    fn name(&self) -> &str {
+        "context-percentage"
+    }
 
     fn render(&self, data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
         let cw = match &data.context_window {
             Some(cw) => cw,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 85, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 85,
+                    visible: false,
+                };
+            }
         };
 
         let pct = match cw.used_percentage {
             Some(p) => p,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 85, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 85,
+                    visible: false,
+                };
+            }
         };
 
-        let display_pct = if config.metadata.get("inverse").map(|v| v == "true").unwrap_or(false) {
+        let display_pct = if config
+            .metadata
+            .get("inverse")
+            .map(|v| v == "true")
+            .unwrap_or(false)
+        {
             100.0 - pct
         } else {
             pct
         };
 
-        let text = if config.metadata.get("bar").map(|v| v == "true").unwrap_or(false) {
+        let text = if config
+            .metadata
+            .get("bar")
+            .map(|v| v == "true")
+            .unwrap_or(false)
+        {
             let filled = ((display_pct / 100.0) * 10.0).round() as usize;
             let filled = filled.min(10);
             let empty = 10 - filled;
@@ -38,7 +64,12 @@ impl Widget for ContextPercentageWidget {
         };
 
         let display_width = text.len();
-        WidgetOutput { text, display_width, priority: 85, visible: true }
+        WidgetOutput {
+            text,
+            display_width,
+            priority: 85,
+            visible: true,
+        }
     }
 }
 
@@ -57,17 +88,33 @@ impl ContextLengthWidget {
 }
 
 impl Widget for ContextLengthWidget {
-    fn name(&self) -> &str { "context-length" }
+    fn name(&self) -> &str {
+        "context-length"
+    }
 
     fn render(&self, data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
         let cw = match &data.context_window {
             Some(cw) => cw,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 60, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 60,
+                    visible: false,
+                };
+            }
         };
 
         let usage = match &cw.current_usage {
             Some(u) => u,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 60, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 60,
+                    visible: false,
+                };
+            }
         };
 
         let total = usage.input_tokens.unwrap_or(0)
@@ -81,6 +128,11 @@ impl Widget for ContextLengthWidget {
         };
 
         let display_width = text.len();
-        WidgetOutput { text, display_width, priority: 60, visible: true }
+        WidgetOutput {
+            text,
+            display_width,
+            priority: 60,
+            visible: true,
+        }
     }
 }

@@ -27,7 +27,7 @@ impl Widget for GitWorktreeWidget {
                     display_width: 0,
                     priority: 45,
                     visible: false,
-                }
+                };
             }
         };
 
@@ -65,7 +65,7 @@ impl Widget for GitWorktreeWidget {
                     display_width: 0,
                     priority: 45,
                     visible: false,
-                }
+                };
             }
         };
 

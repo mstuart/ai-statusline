@@ -125,19 +125,31 @@ fn default_lines() -> Vec<Vec<LineWidgetConfig>> {
     ]]
 }
 
-fn default_theme() -> String { "default".into() }
-fn default_color_level() -> String { "auto".into() }
-fn default_padding() -> String { " ".into() }
-fn default_flex_mode() -> String { "full-minus-40".into() }
-fn default_compact_threshold() -> u8 { 60 }
-fn default_separator() -> String { " | ".into() }
-fn default_powerline_separator() -> String { "\u{E0B0}".into() }
+fn default_theme() -> String {
+    "default".into()
+}
+fn default_color_level() -> String {
+    "auto".into()
+}
+fn default_padding() -> String {
+    " ".into()
+}
+fn default_flex_mode() -> String {
+    "full-minus-40".into()
+}
+fn default_compact_threshold() -> u8 {
+    60
+}
+fn default_separator() -> String {
+    " | ".into()
+}
+fn default_powerline_separator() -> String {
+    "\u{E0B0}".into()
+}
 
 impl Config {
     pub fn load(path: Option<&str>) -> Self {
-        let config_path = path
-            .map(PathBuf::from)
-            .or_else(Self::default_path);
+        let config_path = path.map(PathBuf::from).or_else(Self::default_path);
 
         match config_path {
             Some(p) if p.exists() => {

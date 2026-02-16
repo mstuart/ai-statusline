@@ -1,1 +1,3 @@
 /target
+npm/node_modules/
+npm/bin/claudeline-bin

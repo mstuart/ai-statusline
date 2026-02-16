@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use super::traits::{Widget, WidgetConfig, WidgetOutput};
 use super::data::SessionData;
+use super::traits::{Widget, WidgetConfig, WidgetOutput};
 
 pub struct WidgetRegistry {
     widgets: HashMap<String, Box<dyn Widget>>,
@@ -20,8 +20,15 @@ impl WidgetRegistry {
         self.widgets.insert(widget.name().to_string(), widget);
     }
 
-    pub fn render(&self, widget_type: &str, data: &SessionData, config: &WidgetConfig) -> Option<WidgetOutput> {
-        self.widgets.get(widget_type).map(|w| w.render(data, config))
+    pub fn render(
+        &self,
+        widget_type: &str,
+        data: &SessionData,
+        config: &WidgetConfig,
+    ) -> Option<WidgetOutput> {
+        self.widgets
+            .get(widget_type)
+            .map(|w| w.render(data, config))
     }
 
     fn register_defaults(&mut self) {

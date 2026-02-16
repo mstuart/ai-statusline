@@ -1,13 +1,17 @@
-use super::traits::{Widget, WidgetConfig, WidgetOutput};
 use super::data::SessionData;
+use super::traits::{Widget, WidgetConfig, WidgetOutput};
 use std::fs;
 use std::process::Command;
-use std::time::{SystemTime, Duration};
+use std::time::{Duration, SystemTime};
 
 pub struct CustomCommandWidget;
 
 fn cache_path(command: &str) -> std::path::PathBuf {
-    let hash: String = command.bytes().take(16).map(|b| format!("{:02x}", b)).collect();
+    let hash: String = command
+        .bytes()
+        .take(16)
+        .map(|b| format!("{:02x}", b))
+        .collect();
     std::path::PathBuf::from(format!("/tmp/claudeline-cmd-{hash}"))
 }
 
@@ -45,12 +49,21 @@ fn run_command(cmd: &str) -> Option<String> {
 }
 
 impl Widget for CustomCommandWidget {
-    fn name(&self) -> &str { "custom-command" }
+    fn name(&self) -> &str {
+        "custom-command"
+    }
 
     fn render(&self, _data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
         let cmd = match config.metadata.get("command") {
             Some(c) if !c.is_empty() => c,
-            _ => return WidgetOutput { text: String::new(), display_width: 0, priority: 40, visible: false },
+            _ => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 40,
+                    visible: false,
+                };
+            }
         };
 
         let path = cache_path(cmd);
@@ -62,11 +75,23 @@ impl Widget for CustomCommandWidget {
                     let _ = fs::write(&path, &result);
                     result
                 }
-                None => return WidgetOutput { text: String::new(), display_width: 0, priority: 40, visible: false },
+                None => {
+                    return WidgetOutput {
+                        text: String::new(),
+                        display_width: 0,
+                        priority: 40,
+                        visible: false,
+                    };
+                }
             }
         };
 
         let display_width = text.len();
-        WidgetOutput { text, display_width, priority: 40, visible: true }
+        WidgetOutput {
+            text,
+            display_width,
+            priority: 40,
+            visible: true,
+        }
     }
 }

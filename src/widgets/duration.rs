@@ -1,5 +1,5 @@
-use super::traits::{Widget, WidgetConfig, WidgetOutput};
 use super::data::SessionData;
+use super::traits::{Widget, WidgetConfig, WidgetOutput};
 
 pub struct SessionDurationWidget;
 
@@ -23,22 +23,43 @@ fn format_duration(ms: u64, compact: bool) -> String {
 }
 
 impl Widget for SessionDurationWidget {
-    fn name(&self) -> &str { "session-duration" }
+    fn name(&self) -> &str {
+        "session-duration"
+    }
 
     fn render(&self, data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
         let cost = match &data.cost {
             Some(c) => c,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 65, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 65,
+                    visible: false,
+                };
+            }
         };
 
         let duration_ms = match cost.total_duration_ms {
             Some(d) => d,
-            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 65, visible: false },
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 65,
+                    visible: false,
+                };
+            }
         };
 
         let text = if config.raw_value {
             format_duration(duration_ms, true)
-        } else if config.metadata.get("api_ratio").map(|v| v == "true").unwrap_or(false) {
+        } else if config
+            .metadata
+            .get("api_ratio")
+            .map(|v| v == "true")
+            .unwrap_or(false)
+        {
             if let Some(api_ms) = cost.total_api_duration_ms {
                 if duration_ms > 0 {
                     let ratio = (api_ms as f64 / duration_ms as f64 * 100.0) as u64;
@@ -54,6 +75,11 @@ impl Widget for SessionDurationWidget {
         };
 
         let display_width = text.len();
-        WidgetOutput { text, display_width, priority: 65, visible: true }
+        WidgetOutput {
+            text,
+            display_width,
+            priority: 65,
+            visible: true,
+        }
     }
 }

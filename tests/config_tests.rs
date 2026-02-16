@@ -18,8 +18,19 @@ fn default_config_has_sensible_values() {
 #[test]
 fn default_config_widget_types() {
     let config = Config::default();
-    let types: Vec<&str> = config.lines[0].iter().map(|w| w.widget_type.as_str()).collect();
-    assert_eq!(types, vec!["model", "context-percentage", "session-cost", "session-duration"]);
+    let types: Vec<&str> = config.lines[0]
+        .iter()
+        .map(|w| w.widget_type.as_str())
+        .collect();
+    assert_eq!(
+        types,
+        vec![
+            "model",
+            "context-percentage",
+            "session-cost",
+            "session-duration"
+        ]
+    );
 }
 
 #[test]
@@ -71,7 +82,8 @@ fn config_from_toml_with_custom_theme() {
     config.powerline.auto_align = true;
 
     let serialized = config.to_toml();
-    let deserialized: Config = toml::from_str(&serialized).expect("Failed to parse roundtripped TOML");
+    let deserialized: Config =
+        toml::from_str(&serialized).expect("Failed to parse roundtripped TOML");
     assert_eq!(deserialized.theme, "solarized");
     assert_eq!(deserialized.color_level, "truecolor");
     assert!(deserialized.global_bold);

@@ -67,11 +67,19 @@ impl Renderer {
     }
 
     pub fn bold(&self) -> &str {
-        if self.color_level == ColorLevel::None { "" } else { "\x1b[1m" }
+        if self.color_level == ColorLevel::None {
+            ""
+        } else {
+            "\x1b[1m"
+        }
     }
 
     pub fn reset(&self) -> &str {
-        if self.color_level == ColorLevel::None { "" } else { "\x1b[0m" }
+        if self.color_level == ColorLevel::None {
+            ""
+        } else {
+            "\x1b[0m"
+        }
     }
 
     pub fn osc8_link(&self, url: &str, text: &str) -> String {
@@ -114,15 +122,28 @@ impl Renderer {
     fn named_fg(&self, color: &ColorSpec) -> String {
         let code = match color {
             ColorSpec::Named(n) => match n.as_str() {
-                "black" => "30", "red" => "31", "green" => "32", "yellow" => "33",
-                "blue" => "34", "magenta" => "35", "cyan" => "36", "white" => "37",
-                "brightBlack" => "90", "brightRed" => "91", "brightGreen" => "92",
-                "brightYellow" => "93", "brightBlue" => "94", "brightMagenta" => "95",
-                "brightCyan" => "96", "brightWhite" => "97",
+                "black" => "30",
+                "red" => "31",
+                "green" => "32",
+                "yellow" => "33",
+                "blue" => "34",
+                "magenta" => "35",
+                "cyan" => "36",
+                "white" => "37",
+                "brightBlack" => "90",
+                "brightRed" => "91",
+                "brightGreen" => "92",
+                "brightYellow" => "93",
+                "brightBlue" => "94",
+                "brightMagenta" => "95",
+                "brightCyan" => "96",
+                "brightWhite" => "97",
                 _ => "37",
             },
             ColorSpec::Ansi256(n) => return format!("\x1b[38;5;{n}m"),
-            ColorSpec::Rgb(r, g, b) => return format!("\x1b[38;5;{}m", Self::rgb_to_256(*r, *g, *b)),
+            ColorSpec::Rgb(r, g, b) => {
+                return format!("\x1b[38;5;{}m", Self::rgb_to_256(*r, *g, *b));
+            }
         };
         format!("\x1b[{code}m")
     }
@@ -130,16 +151,28 @@ impl Renderer {
     fn named_bg(&self, color: &ColorSpec) -> String {
         let code = match color {
             ColorSpec::Named(n) => match n.as_str() {
-                "black" => "40", "red" => "41", "green" => "42", "yellow" => "43",
-                "blue" => "44", "magenta" => "45", "cyan" => "46", "white" => "47",
-                "brightBlack" | "bgBrightBlack" => "100", "brightRed" | "bgBrightRed" => "101",
-                "brightGreen" | "bgBrightGreen" => "102", "brightYellow" | "bgBrightYellow" => "103",
-                "brightBlue" | "bgBrightBlue" => "104", "brightMagenta" | "bgBrightMagenta" => "105",
-                "brightCyan" | "bgBrightCyan" => "106", "brightWhite" | "bgBrightWhite" => "107",
+                "black" => "40",
+                "red" => "41",
+                "green" => "42",
+                "yellow" => "43",
+                "blue" => "44",
+                "magenta" => "45",
+                "cyan" => "46",
+                "white" => "47",
+                "brightBlack" | "bgBrightBlack" => "100",
+                "brightRed" | "bgBrightRed" => "101",
+                "brightGreen" | "bgBrightGreen" => "102",
+                "brightYellow" | "bgBrightYellow" => "103",
+                "brightBlue" | "bgBrightBlue" => "104",
+                "brightMagenta" | "bgBrightMagenta" => "105",
+                "brightCyan" | "bgBrightCyan" => "106",
+                "brightWhite" | "bgBrightWhite" => "107",
                 _ => "40",
             },
             ColorSpec::Ansi256(n) => return format!("\x1b[48;5;{n}m"),
-            ColorSpec::Rgb(r, g, b) => return format!("\x1b[48;5;{}m", Self::rgb_to_256(*r, *g, *b)),
+            ColorSpec::Rgb(r, g, b) => {
+                return format!("\x1b[48;5;{}m", Self::rgb_to_256(*r, *g, *b));
+            }
         };
         format!("\x1b[{code}m")
     }
@@ -176,8 +209,12 @@ impl Renderer {
 
     fn rgb_to_256(r: u8, g: u8, b: u8) -> u8 {
         if r == g && g == b {
-            if r < 8 { return 16; }
-            if r > 248 { return 231; }
+            if r < 8 {
+                return 16;
+            }
+            if r > 248 {
+                return 231;
+            }
             return ((r as u16 - 8) * 24 / 247 + 232) as u8;
         }
         let ri = (r as u16 * 5 / 255) as u8;

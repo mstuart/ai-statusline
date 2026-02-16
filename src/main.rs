@@ -11,7 +11,11 @@ use claudeline::render::Renderer;
 use claudeline::widgets::{SessionData, WidgetRegistry};
 
 #[derive(Parser)]
-#[command(name = "claudeline", version, about = "A high-performance status line for Claude Code")]
+#[command(
+    name = "claudeline",
+    version,
+    about = "A high-performance status line for Claude Code"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Option<cli::Commands>,
