@@ -47,7 +47,7 @@ pub struct LineWidgetConfig {
     pub metadata: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PowerlineConfig {
     #[serde(default)]
     pub enabled: bool,
@@ -61,6 +61,19 @@ pub struct PowerlineConfig {
     pub end_cap: Option<String>,
     #[serde(default)]
     pub auto_align: bool,
+}
+
+impl Default for PowerlineConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            separator: default_powerline_separator(),
+            separator_invert_background: false,
+            start_cap: None,
+            end_cap: None,
+            auto_align: false,
+        }
+    }
 }
 
 fn default_lines() -> Vec<Vec<LineWidgetConfig>> {
