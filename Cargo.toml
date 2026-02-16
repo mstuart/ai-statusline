@@ -1,11 +1,11 @@
 [package]
-name = "claude-status"
+name = "token-sentinel"
 version = "1.0.0"
 edition = "2024"
-description = "A high-performance, customizable status line for Claude Code CLI"
+description = "AI coding cost optimizer and token usage monitor - protect your budget with real-time tracking"
 license = "MIT"
-repository = "https://github.com/mstuart/claude-status"
-keywords = ["claude-code", "statusline", "terminal", "cli", "developer-tools"]
+repository = "https://github.com/mstuart/token-sentinel"
+keywords = ["ai-coding", "token-tracking", "cost-optimization", "cli", "developer-tools"]
 categories = ["command-line-utilities", "development-tools"]
 
 [dependencies]
@@ -17,6 +17,16 @@ crossterm = "0.28"
 unicode-width = "0.2"
 dirs = "6"
 ratatui = "0.29"
+rusqlite = { version = "0.31", features = ["bundled"] }
+chrono = { version = "0.4", features = ["serde"] }
+sha2 = "0.10"
+hex = "0.4"
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false, optional = true }
+tokio = { version = "1", features = ["rt", "macros"], optional = true }
+
+[features]
+default = []
+online-license = ["reqwest", "tokio"]
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }

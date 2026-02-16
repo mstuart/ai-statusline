@@ -1,4 +1,4 @@
-# token-sentinel
+# claude-status
 
 A high-performance, customizable status line for [Claude Code](https://claude.ai/code) CLI.
 
@@ -16,9 +16,9 @@ Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
 - 🚀 **Sub-millisecond rendering** — Zero lag, always fresh
 - 🔧 **Zero dependencies** — Single 1MB binary, no Node.js required
 
-## Why token-sentinel?
+## Why claude-status?
 
-| | token-sentinel | ccstatusline |
+| | claude-status | ccstatusline |
 |---|---|---|
 | **Language** | Rust (compiled binary) | TypeScript (bunx/npx) |
 | **Render time** | <1ms | ~200ms (npx overhead) |
@@ -36,10 +36,10 @@ Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
 
 ```bash
 # npm (downloads platform binary automatically)
-npm install -g token-sentinel
+npm install -g claude-status
 
 # Or direct binary
-curl -fsSL https://raw.githubusercontent.com/mstuart/token-sentinel/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/mstuart/claude-status/main/scripts/install.sh | sh
 
 # Or build from source
 cargo install --path .
@@ -53,7 +53,7 @@ Add to `~/.claude/settings.json`:
 {
   "statusLine": {
     "type": "command",
-    "command": "token-sentinel"
+    "command": "claude-status"
   }
 }
 ```
@@ -67,7 +67,7 @@ Restart Claude Code. Done.
 The easiest way to customize your status line:
 
 ```bash
-token-sentinel config
+claude-status config
 ```
 
 The TUI configurator lets you:
@@ -83,10 +83,10 @@ The TUI configurator lets you:
 Apply pre-built layouts instantly:
 
 ```bash
-token-sentinel preset full       # Two-line layout with everything
-token-sentinel preset minimal    # Just model + context %
-token-sentinel preset powerline  # Full layout with powerline arrows
-token-sentinel preset compact    # Single line, compact values
+claude-status preset full       # Two-line layout with everything
+claude-status preset minimal    # Just model + context %
+claude-status preset powerline  # Full layout with powerline arrows
+claude-status preset compact    # Single line, compact values
 ```
 
 ## Widgets
@@ -143,7 +143,7 @@ token-sentinel preset compact    # Single line, compact values
 Launch the interactive TUI to configure your status line visually:
 
 ```bash
-token-sentinel config
+claude-status config
 ```
 
 **Navigation:**
@@ -166,10 +166,10 @@ token-sentinel config
 
 ### Manual Configuration
 
-Config lives at `~/.config/token-sentinel/config.toml`. Generate a default:
+Config lives at `~/.config/claude-status/config.toml`. Generate a default:
 
 ```bash
-token-sentinel init
+claude-status init
 ```
 
 Or edit the TOML file directly for advanced customization.
@@ -260,15 +260,15 @@ Every widget supports:
 11 built-in themes optimized for popular terminal color schemes:
 
 ```bash
-token-sentinel theme list    # List all themes
-token-sentinel theme set nord  # Switch theme
+claude-status theme list    # List all themes
+claude-status theme set nord  # Switch theme
 ```
 
 Available: `default`, `solarized`, `nord`, `dracula`, `gruvbox`, `monokai`, `light`, `high-contrast`, `one-dark`, `tokyo-night`, `catppuccin`
 
 ## Color Support
 
-token-sentinel auto-detects terminal color capabilities:
+claude-status auto-detects terminal color capabilities:
 
 - **Truecolor** (24-bit): detected via `COLORTERM=truecolor`
 - **256-color**: detected via `TERM=*256color*`
@@ -278,22 +278,22 @@ token-sentinel auto-detects terminal color capabilities:
 Override with `--color-level`:
 
 ```bash
-token-sentinel --color-level truecolor
-token-sentinel --color-level none
+claude-status --color-level truecolor
+claude-status --color-level none
 ```
 
 ## CLI Commands
 
 ```bash
-token-sentinel              # Render status line (reads JSON from stdin)
-token-sentinel init         # Generate default config file
-token-sentinel doctor       # Check environment compatibility
-token-sentinel theme list   # List available themes
-token-sentinel theme set <name>  # Switch theme
-token-sentinel preset <name>     # Apply a preset layout
-token-sentinel config            # Interactive TUI configurator
-token-sentinel dump-schema       # Print expected JSON input schema
-token-sentinel --version         # Show version
+claude-status              # Render status line (reads JSON from stdin)
+claude-status init         # Generate default config file
+claude-status doctor       # Check environment compatibility
+claude-status theme list   # List available themes
+claude-status theme set <name>  # Switch theme
+claude-status preset <name>     # Apply a preset layout
+claude-status config            # Interactive TUI configurator
+claude-status dump-schema       # Print expected JSON input schema
+claude-status --version         # Show version
 ```
 
 ## Performance
@@ -307,23 +307,23 @@ Benchmarked on Apple M1:
 | Memory usage | 1.2 MB |
 | Startup time | <1ms |
 
-Claude Code debounces status line updates at 300ms. token-sentinel completes in <1ms, ensuring the status line is always fresh and never causes UI lag.
+Claude Code debounces status line updates at 300ms. claude-status completes in <1ms, ensuring the status line is always fresh and never causes UI lag.
 
 ## How It Works
 
-Claude Code pipes JSON session data to your status line script via stdin. token-sentinel reads this JSON, applies your configuration, and prints formatted ANSI text to stdout. No transcript parsing, no file watching, no external dependencies.
+Claude Code pipes JSON session data to your status line script via stdin. claude-status reads this JSON, applies your configuration, and prints formatted ANSI text to stdout. No transcript parsing, no file watching, no external dependencies.
 
 ```
-Claude Code → JSON stdin → token-sentinel → ANSI stdout → Terminal
+Claude Code → JSON stdin → claude-status → ANSI stdout → Terminal
 ```
 
 ## Building from Source
 
 ```bash
-git clone https://github.com/mstuart/token-sentinel
-cd token-sentinel
+git clone https://github.com/mstuart/claude-status
+cd claude-status
 cargo build --release
-# Binary at ./target/release/token-sentinel
+# Binary at ./target/release/claude-status
 ```
 
 ## License

@@ -1,0 +1,14 @@
+{
+  "name": "claude-status-license-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "License validation server for claude-status Pro",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test test/worker.test.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

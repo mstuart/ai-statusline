@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use chrono::Datelike;
 use clap::Subcommand;
 
 use claude_status::config::{Config, LineWidgetConfig, PowerlineConfig};
@@ -25,6 +26,17 @@ pub enum Commands {
     },
     /// Dump the expected JSON input schema
     DumpSchema,
+    /// Manage Pro license
+    License {
+        #[command(subcommand)]
+        action: LicenseAction,
+    },
+    /// Show historical cost statistics (Pro)
+    Stats {
+        /// Time period: daily, weekly, monthly
+        #[arg(long, default_value = "weekly")]
+        period: String,
+    },
 }
 
 #[derive(Subcommand)]
@@ -33,6 +45,19 @@ pub enum ThemeAction {
     List,
     /// Set active theme
     Set { name: String },
+}
+
+#[derive(Subcommand)]
+pub enum LicenseAction {
+    /// Activate a Pro license key
+    Activate {
+        /// License key (format: CS-PRO-XXXX-XXXX-XXXX-XXXX)
+        key: String,
+    },
+    /// Deactivate (remove) the current license
+    Deactivate,
+    /// Show current license status
+    Status,
 }
 
 pub fn handle_command(cmd: Commands) {
@@ -50,6 +75,12 @@ pub fn handle_command(cmd: Commands) {
         },
         Commands::Preset { name } => cmd_preset(&name),
         Commands::DumpSchema => cmd_dump_schema(),
+        Commands::License { action } => match action {
+            LicenseAction::Activate { key } => cmd_license_activate(&key),
+            LicenseAction::Deactivate => cmd_license_deactivate(),
+            LicenseAction::Status => cmd_license_status(),
+        },
+        Commands::Stats { period } => cmd_stats(&period),
     }
 }
 
@@ -158,6 +189,14 @@ fn cmd_doctor() {
             "  - Config: not found at {} (run `claude-status init` to create)",
             cfg_path.display()
         );
+    }
+
+    // License status
+    let pro = claude_status::license::is_pro();
+    if pro {
+        print_check(true, "License: Pro (active)");
+    } else {
+        println!("  - License: Free (run `claude-status license activate <key>` to upgrade)");
     }
 
     println!();
@@ -333,6 +372,205 @@ fn preset_compact() -> Config {
         ]],
         ..Config::default()
     }
+}
+
+fn cmd_license_activate(key: &str) {
+    let validator = claude_status::license::LicenseValidator::new();
+    match validator.activate(key) {
+        Ok(info) => {
+            println!("License activated successfully!");
+            println!();
+            println!("  Tier:     {:?}", info.tier);
+            println!("  Status:   {:?}", info.status);
+            println!("  Features: {}", info.features.join(", "));
+            if let Some(expires) = info.expires {
+                println!("  Expires:  {}", expires.format("%Y-%m-%d"));
+            }
+            println!();
+            println!("Pro features are now enabled.");
+        }
+        Err(e) => {
+            eprintln!("License activation failed: {e}");
+        }
+    }
+}
+
+fn cmd_license_deactivate() {
+    let validator = claude_status::license::LicenseValidator::new();
+    match validator.deactivate() {
+        Ok(()) => {
+            println!("License deactivated. Pro features are now disabled.");
+        }
+        Err(e) => {
+            eprintln!("Error deactivating license: {e}");
+        }
+    }
+}
+
+fn cmd_license_status() {
+    match claude_status::license::check_pro() {
+        Some(info) => {
+            println!("claude-status Pro");
+            println!("=================");
+            println!();
+            println!("  Status:   {:?}", info.status);
+            println!("  Tier:     {:?}", info.tier);
+            println!(
+                "  Key:      {}...{}",
+                &info.key[..11],
+                &info.key[info.key.len() - 4..]
+            );
+            println!("  Features: {}", info.features.join(", "));
+            if let Some(expires) = info.expires {
+                println!("  Expires:  {}", expires.format("%Y-%m-%d"));
+            } else {
+                println!("  Expires:  never");
+            }
+            if let Some(validated) = info.last_validated {
+                println!("  Validated: {}", validated.format("%Y-%m-%d %H:%M UTC"));
+            }
+            println!("  Machine:  {}", info.machine_id);
+        }
+        None => {
+            let storage = claude_status::license::LicenseStorage::new();
+            if let Some(key) = storage.load_key() {
+                let validator = claude_status::license::LicenseValidator::new();
+                let info = validator.validate(&key);
+                println!("claude-status Free (license issue)");
+                println!("==================================");
+                println!();
+                println!("  Status:  {:?}", info.status);
+                println!(
+                    "  Key:     {}...{}",
+                    &key[..11.min(key.len())],
+                    &key[key.len().saturating_sub(4)..]
+                );
+                println!();
+                println!("Your license key could not be validated.");
+                println!("Run `claude-status license activate <key>` with a valid key.");
+            } else {
+                println!("claude-status Free");
+                println!("==================");
+                println!();
+                println!("No Pro license is active.");
+                println!();
+                println!("Upgrade to Pro for cost tracking, burn rate analysis,");
+                println!("model routing suggestions, and more.");
+                println!();
+                println!("  Activate: claude-status license activate <key>");
+                println!("  Purchase: https://claude-status.dev/pro");
+            }
+        }
+    }
+}
+
+fn cmd_stats(period: &str) {
+    if !claude_status::license::is_pro() {
+        println!("claude-status Stats (Pro feature)");
+        println!("=================================");
+        println!();
+        println!("Historical stats require a Pro license.");
+        println!();
+        println!("  Activate: claude-status license activate <key>");
+        println!("  Purchase: https://claude-status.dev/pro");
+        return;
+    }
+
+    let tracker = match claude_status::CostTracker::open() {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("Error opening cost database: {e}");
+            return;
+        }
+    };
+
+    let now = chrono::Utc::now();
+    let today_start = now
+        .date_naive()
+        .and_hms_opt(0, 0, 0)
+        .unwrap()
+        .and_utc()
+        .timestamp();
+    let yesterday_start = today_start - 86400;
+    let week_start = today_start
+        - (now.weekday().num_days_from_monday() as i64 * 86400);
+    let month_start = now
+        .date_naive()
+        .with_day(1)
+        .unwrap()
+        .and_hms_opt(0, 0, 0)
+        .unwrap()
+        .and_utc()
+        .timestamp();
+    let now_ts = now.timestamp();
+
+    println!("claude-status Stats");
+    println!("===================");
+    println!();
+
+    // Daily
+    let today_cost = tracker.session_cost_range(today_start, now_ts);
+    let yesterday_cost = tracker.session_cost_range(yesterday_start, today_start);
+    let daily_change = if yesterday_cost > 0.0 {
+        let pct = ((today_cost - yesterday_cost) / yesterday_cost) * 100.0;
+        if pct >= 0.0 {
+            format!(" (+{:.0}% vs yesterday)", pct)
+        } else {
+            format!(" ({:.0}% vs yesterday)", pct)
+        }
+    } else {
+        String::new()
+    };
+    println!(
+        "  Daily:   ${:.2}{}",
+        today_cost, daily_change
+    );
+
+    // Weekly
+    let weekly_cost = tracker.session_cost_range(week_start, now_ts);
+    let weekly_limit = 200.0;
+    let weekly_pct = (weekly_cost / weekly_limit) * 100.0;
+    println!(
+        "  Weekly:  ${:.2} ({:.0}% of ${:.0} limit)",
+        weekly_cost, weekly_pct, weekly_limit
+    );
+
+    // Monthly
+    let monthly_cost = tracker.session_cost_range(month_start, now_ts);
+    let days_elapsed = ((now_ts - month_start) as f64 / 86400.0).max(1.0);
+    let avg_daily = monthly_cost / days_elapsed;
+    println!(
+        "  Monthly: ${:.2} (avg ${:.2}/day)",
+        monthly_cost, avg_daily
+    );
+
+    // Top sessions
+    let range_start = match period {
+        "daily" => today_start,
+        "monthly" => month_start,
+        _ => week_start, // default: weekly
+    };
+    let top = tracker.top_sessions(range_start, now_ts, 5);
+    if !top.is_empty() {
+        println!();
+        println!("  Top costly sessions ({period}):");
+        for (i, session) in top.iter().enumerate() {
+            let dt = chrono::DateTime::from_timestamp(session.start_time, 0)
+                .map(|d| d.format("%b %d, %H:%M").to_string())
+                .unwrap_or_else(|| "unknown".into());
+            println!(
+                "  {}. {} - ${:.2} ({})",
+                i + 1,
+                dt,
+                session.total_cost,
+                session.model
+            );
+        }
+    }
+
+    let session_count = tracker.session_count_range(range_start, now_ts);
+    println!();
+    println!("  Sessions this {period}: {session_count}");
 }
 
 fn cmd_dump_schema() {

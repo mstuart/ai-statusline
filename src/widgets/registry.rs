@@ -65,5 +65,10 @@ impl WidgetRegistry {
         self.register(Box::new(super::separator::SeparatorWidget));
         self.register(Box::new(super::terminal_width::TerminalWidthWidget));
         self.register(Box::new(super::flex_separator::FlexSeparatorWidget));
+
+        // Pro widgets (gracefully hidden when not licensed)
+        self.register(Box::new(super::burn_rate::BurnRateWidget));
+        self.register(Box::new(super::cost_warning::CostWarningWidget));
+        self.register(Box::new(super::model_suggest::ModelSuggestWidget));
     }
 }

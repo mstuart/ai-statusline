@@ -1,0 +1,11 @@
+name = "claude-status-license"
+main = "src/worker.js"
+compatibility_date = "2025-12-01"
+
+[vars]
+MAX_MACHINES_PER_LICENSE = "3"
+
+[[kv_namespaces]]
+binding = "LICENSES"
+id = "PLACEHOLDER_KV_ID"
+preview_id = "PLACEHOLDER_PREVIEW_KV_ID"
