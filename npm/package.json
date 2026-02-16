@@ -1,23 +1,37 @@
 {
-  "name": "claude-status",
+  "name": "ai-statusline",
   "version": "1.0.0",
-  "description": "A high-performance, customizable status line for Claude Code CLI",
+  "description": "Customizable status line for AI coding assistants - real-time model, tokens, cost, git status display",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mstuart/claude-status.git"
+    "url": "https://github.com/mstuart/ai-statusline"
   },
+  "homepage": "https://github.com/mstuart/ai-statusline#readme",
   "keywords": [
-    "claude-code",
+    "ai-coding",
     "statusline",
     "terminal",
-    "cli"
+    "cli",
+    "developer-tools",
+    "claude-code",
+    "cursor",
+    "ai-assistant"
   ],
   "bin": {
-    "claude-status": "./bin/cli.js"
+    "ai-statusline": "bin/ai-statusline"
   },
   "scripts": {
-    "postinstall": "node install.js"
+    "postinstall": "node scripts/install.js"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16"
   },
   "os": [
     "darwin",

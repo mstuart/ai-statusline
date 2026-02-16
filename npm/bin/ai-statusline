@@ -1,0 +1,24 @@
+#!/bin/sh
+# Wrapper script for ai-statusline binary
+# The actual binary is downloaded during npm postinstall
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BINARY="$SCRIPT_DIR/ai-statusline-bin"
+
+if [ -f "$BINARY" ]; then
+  exec "$BINARY" "$@"
+fi
+
+# Check for binary with platform-specific name
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) BINARY="$SCRIPT_DIR/ai-statusline.exe" ;;
+esac
+
+if [ -f "$BINARY" ]; then
+  exec "$BINARY" "$@"
+fi
+
+echo "Error: ai-statusline binary not found."
+echo "Try reinstalling: npm install -g ai-statusline"
+echo "Or build from source: cargo install --path ."
+exit 1
