@@ -30,6 +30,7 @@ impl Widget for BlockTimerWidget {
                     display_width: 0,
                     priority: 55,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -42,6 +43,7 @@ impl Widget for BlockTimerWidget {
                     display_width: 0,
                     priority: 55,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -81,6 +83,7 @@ impl Widget for BlockTimerWidget {
             display_width,
             priority: 55,
             visible: true,
+            color_hint: None,
         }
     }
 }

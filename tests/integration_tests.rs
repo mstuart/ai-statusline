@@ -287,6 +287,7 @@ fn widget_registry_has_all_expected_widgets() {
         "custom-command",
         "custom-text",
         "separator",
+        "flex-separator",
         "terminal-width",
     ];
 
@@ -296,5 +297,60 @@ fn widget_registry_has_all_expected_widgets() {
             "Widget '{}' should be registered in the registry",
             name
         );
+    }
+}
+
+#[test]
+fn theme_list_has_eleven_themes() {
+    let themes = claudeline::themes::Theme::list();
+    assert_eq!(themes.len(), 11);
+    assert!(themes.contains(&"default"));
+    assert!(themes.contains(&"solarized"));
+    assert!(themes.contains(&"nord"));
+    assert!(themes.contains(&"dracula"));
+    assert!(themes.contains(&"gruvbox"));
+    assert!(themes.contains(&"monokai"));
+    assert!(themes.contains(&"light"));
+    assert!(themes.contains(&"high-contrast"));
+    assert!(themes.contains(&"one-dark"));
+    assert!(themes.contains(&"tokyo-night"));
+    assert!(themes.contains(&"catppuccin"));
+}
+
+#[test]
+fn theme_role_for_widget_returns_color() {
+    let theme = claudeline::themes::Theme::get("dracula");
+    assert!(theme.role_for_widget("model").is_some());
+    assert!(theme.role_for_widget("context-percentage").is_some());
+    assert!(theme.role_for_widget("git-branch").is_some());
+    assert!(theme.role_for_widget("session-cost").is_some());
+    assert!(theme.role_for_widget("separator").is_some());
+    assert!(theme.role_for_widget("nonexistent-widget").is_none());
+}
+
+#[test]
+fn all_themes_have_required_color_roles() {
+    for name in claudeline::themes::Theme::list() {
+        let theme = claudeline::themes::Theme::get(name);
+        let roles = [
+            "model",
+            "context_ok",
+            "context_warn",
+            "context_critical",
+            "git_branch",
+            "git_clean",
+            "git_dirty",
+            "cost",
+            "duration",
+            "separator_fg",
+        ];
+        for role in &roles {
+            assert!(
+                theme.color(role).is_some(),
+                "Theme '{}' missing color role '{}'",
+                name,
+                role
+            );
+        }
     }
 }

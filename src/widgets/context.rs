@@ -1,6 +1,16 @@
 use super::data::SessionData;
 use super::traits::{Widget, WidgetConfig, WidgetOutput};
 
+fn context_color_hint(pct: f64) -> Option<String> {
+    if pct < 50.0 {
+        Some("green".into())
+    } else if pct <= 80.0 {
+        Some("yellow".into())
+    } else {
+        Some("red".into())
+    }
+}
+
 pub struct ContextPercentageWidget;
 
 impl Widget for ContextPercentageWidget {
@@ -17,6 +27,7 @@ impl Widget for ContextPercentageWidget {
                     display_width: 0,
                     priority: 85,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -29,6 +40,7 @@ impl Widget for ContextPercentageWidget {
                     display_width: 0,
                     priority: 85,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -69,6 +81,7 @@ impl Widget for ContextPercentageWidget {
             display_width,
             priority: 85,
             visible: true,
+            color_hint: context_color_hint(pct),
         }
     }
 }
@@ -101,9 +114,12 @@ impl Widget for ContextLengthWidget {
                     display_width: 0,
                     priority: 60,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
+
+        let pct = cw.used_percentage.unwrap_or(0.0);
 
         let usage = match &cw.current_usage {
             Some(u) => u,
@@ -113,6 +129,7 @@ impl Widget for ContextLengthWidget {
                     display_width: 0,
                     priority: 60,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -133,6 +150,7 @@ impl Widget for ContextLengthWidget {
             display_width,
             priority: 60,
             visible: true,
+            color_hint: context_color_hint(pct),
         }
     }
 }

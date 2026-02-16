@@ -17,6 +17,7 @@ impl Widget for VimModeWidget {
                     display_width: 0,
                     priority: 95,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -28,6 +29,7 @@ impl Widget for VimModeWidget {
             display_width,
             priority: 95,
             visible: true,
+            color_hint: None,
         }
     }
 }

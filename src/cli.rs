@@ -38,7 +38,9 @@ pub enum ThemeAction {
 pub fn handle_command(cmd: Commands) {
     match cmd {
         Commands::Config => {
-            eprintln!("TUI config not yet implemented");
+            if let Err(e) = claudeline::tui::run_tui() {
+                eprintln!("TUI error: {e}");
+            }
         }
         Commands::Init => cmd_init(),
         Commands::Doctor => cmd_doctor(),
@@ -60,11 +62,11 @@ fn config_path() -> std::path::PathBuf {
 
 fn cmd_init() {
     let path = config_path();
-    if let Some(parent) = path.parent() {
-        if let Err(e) = std::fs::create_dir_all(parent) {
-            eprintln!("Error creating config directory: {e}");
-            return;
-        }
+    if let Some(parent) = path.parent()
+        && let Err(e) = std::fs::create_dir_all(parent)
+    {
+        eprintln!("Error creating config directory: {e}");
+        return;
     }
 
     let config = Config::default();

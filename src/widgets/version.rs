@@ -17,6 +17,7 @@ impl Widget for VersionWidget {
                     display_width: 0,
                     priority: 25,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -33,6 +34,7 @@ impl Widget for VersionWidget {
             display_width,
             priority: 25,
             visible: true,
+            color_hint: None,
         }
     }
 }

@@ -17,6 +17,7 @@ impl Widget for ModelWidget {
                     display_width: 0,
                     priority: 90,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -37,6 +38,7 @@ impl Widget for ModelWidget {
             display_width,
             priority: 90,
             visible: true,
+            color_hint: None,
         }
     }
 }

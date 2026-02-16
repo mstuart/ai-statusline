@@ -60,6 +60,7 @@ impl Widget for GitStatusWidget {
                     display_width: 0,
                     priority: 70,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -74,6 +75,7 @@ impl Widget for GitStatusWidget {
                     display_width: 0,
                     priority: 70,
                     visible: true,
+                    color_hint: None,
                 };
             }
             let display_width = text.len();
@@ -82,6 +84,7 @@ impl Widget for GitStatusWidget {
                 display_width,
                 priority: 70,
                 visible: true,
+                color_hint: None,
             };
         }
 
@@ -97,6 +100,7 @@ impl Widget for GitStatusWidget {
                     display_width: 0,
                     priority: 70,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -138,6 +142,7 @@ impl Widget for GitStatusWidget {
             display_width,
             priority: 70,
             visible: true,
+            color_hint: None,
         }
     }
 }

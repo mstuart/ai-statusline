@@ -37,7 +37,7 @@ impl Widget for GitBranchWidget {
         "git-branch"
     }
 
-    fn render(&self, data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
+    fn render(&self, data: &SessionData, _config: &WidgetConfig) -> WidgetOutput {
         let dir = match get_working_dir(data) {
             Some(d) => d,
             None => {
@@ -46,6 +46,7 @@ impl Widget for GitBranchWidget {
                     display_width: 0,
                     priority: 75,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -53,17 +54,14 @@ impl Widget for GitBranchWidget {
         let cache = cache_path("git-branch", &dir);
 
         if let Some(cached) = read_cache(&cache, 5) {
-            let text = if config.raw_value {
-                cached.trim().to_string()
-            } else {
-                cached.trim().to_string()
-            };
+            let text = cached.trim().to_string();
             let display_width = text.len();
             return WidgetOutput {
                 text,
                 display_width,
                 priority: 75,
                 visible: true,
+                color_hint: None,
             };
         }
 
@@ -103,6 +101,7 @@ impl Widget for GitBranchWidget {
                                 display_width: 0,
                                 priority: 75,
                                 visible: false,
+                                color_hint: None,
                             };
                         }
                         hash
@@ -113,6 +112,7 @@ impl Widget for GitBranchWidget {
                             display_width: 0,
                             priority: 75,
                             visible: false,
+                            color_hint: None,
                         };
                     }
                 }
@@ -128,6 +128,7 @@ impl Widget for GitBranchWidget {
             display_width,
             priority: 75,
             visible: true,
+            color_hint: None,
         }
     }
 }

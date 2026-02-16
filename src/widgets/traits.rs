@@ -7,6 +7,7 @@ pub struct WidgetOutput {
     pub display_width: usize,
     pub priority: u8,
     pub visible: bool,
+    pub color_hint: Option<String>,
 }
 
 #[derive(Debug, Clone, Default)]

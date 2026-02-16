@@ -43,6 +43,7 @@ impl Widget for TokenInputWidget {
                     display_width: 0,
                     priority: 55,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -60,6 +61,7 @@ impl Widget for TokenInputWidget {
             display_width,
             priority: 55,
             visible: true,
+            color_hint: None,
         }
     }
 }
@@ -84,6 +86,7 @@ impl Widget for TokenOutputWidget {
                     display_width: 0,
                     priority: 53,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -101,6 +104,7 @@ impl Widget for TokenOutputWidget {
             display_width,
             priority: 53,
             visible: true,
+            color_hint: None,
         }
     }
 }
@@ -125,6 +129,7 @@ impl Widget for TokenCachedWidget {
                     display_width: 0,
                     priority: 51,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -143,6 +148,7 @@ impl Widget for TokenCachedWidget {
             display_width,
             priority: 51,
             visible: true,
+            color_hint: None,
         }
     }
 }
@@ -167,6 +173,7 @@ impl Widget for TokenTotalWidget {
                     display_width: 0,
                     priority: 50,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -187,6 +194,7 @@ impl Widget for TokenTotalWidget {
             display_width,
             priority: 50,
             visible: true,
+            color_hint: None,
         }
     }
 }

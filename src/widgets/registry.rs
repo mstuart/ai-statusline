@@ -7,6 +7,12 @@ pub struct WidgetRegistry {
     widgets: HashMap<String, Box<dyn Widget>>,
 }
 
+impl Default for WidgetRegistry {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl WidgetRegistry {
     pub fn new() -> Self {
         let mut registry = Self {
@@ -58,5 +64,6 @@ impl WidgetRegistry {
         self.register(Box::new(super::custom_text::CustomTextWidget));
         self.register(Box::new(super::separator::SeparatorWidget));
         self.register(Box::new(super::terminal_width::TerminalWidthWidget));
+        self.register(Box::new(super::flex_separator::FlexSeparatorWidget));
     }
 }

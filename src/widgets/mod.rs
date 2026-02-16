@@ -13,6 +13,7 @@ mod custom_text;
 mod cwd;
 mod duration;
 mod exceeds_tokens;
+mod flex_separator;
 mod git_branch;
 mod git_status;
 mod git_worktree;

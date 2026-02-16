@@ -35,15 +35,15 @@ impl Renderer {
         if env::var("NO_COLOR").is_ok() {
             return ColorLevel::None;
         }
-        if let Ok(ct) = env::var("COLORTERM") {
-            if ct == "truecolor" || ct == "24bit" {
-                return ColorLevel::TrueColor;
-            }
+        if let Ok(ct) = env::var("COLORTERM")
+            && (ct == "truecolor" || ct == "24bit")
+        {
+            return ColorLevel::TrueColor;
         }
-        if let Ok(term) = env::var("TERM") {
-            if term.contains("256color") {
-                return ColorLevel::Color256;
-            }
+        if let Ok(term) = env::var("TERM")
+            && term.contains("256color")
+        {
+            return ColorLevel::Color256;
         }
         ColorLevel::Basic16
     }

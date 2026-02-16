@@ -801,6 +801,7 @@ fn all_widgets_with_empty_session_no_panic() {
         "custom-command",
         "custom-text",
         "separator",
+        "flex-separator",
         "terminal-width",
     ];
 
@@ -808,6 +809,84 @@ fn all_widgets_with_empty_session_no_panic() {
         let result = registry.render(name, &data, &config);
         assert!(result.is_some(), "Widget '{}' should be registered", name);
     }
+}
+
+// ─── FlexSeparatorWidget ─────────────────────────────────────
+
+#[test]
+fn flex_separator_renders_fill_char() {
+    let registry = WidgetRegistry::new();
+    let data = mock_session();
+    let config = default_config();
+    let output = registry.render("flex-separator", &data, &config).unwrap();
+    assert!(output.visible);
+    assert_eq!(output.text, " "); // default fill char is space
+    assert_eq!(output.display_width, 0); // signals layout engine to expand
+}
+
+#[test]
+fn flex_separator_custom_char() {
+    let registry = WidgetRegistry::new();
+    let data = mock_session();
+    let mut config = default_config();
+    config.metadata.insert("char".into(), "-".into());
+    let output = registry.render("flex-separator", &data, &config).unwrap();
+    assert!(output.visible);
+    assert_eq!(output.text, "-");
+}
+
+// ─── Dynamic Context Color ───────────────────────────────────
+
+#[test]
+fn context_percentage_color_hint_green_below_50() {
+    let registry = WidgetRegistry::new();
+    let data = mock_session(); // used_percentage: 42.5
+    let config = default_config();
+    let output = registry
+        .render("context-percentage", &data, &config)
+        .unwrap();
+    assert_eq!(output.color_hint, Some("green".into()));
+}
+
+#[test]
+fn context_percentage_color_hint_yellow_at_50_to_80() {
+    let registry = WidgetRegistry::new();
+    let mut data = mock_session();
+    data.context_window = Some(ContextWindow {
+        used_percentage: Some(65.0),
+        remaining_percentage: Some(35.0),
+        ..Default::default()
+    });
+    let config = default_config();
+    let output = registry
+        .render("context-percentage", &data, &config)
+        .unwrap();
+    assert_eq!(output.color_hint, Some("yellow".into()));
+}
+
+#[test]
+fn context_percentage_color_hint_red_above_80() {
+    let registry = WidgetRegistry::new();
+    let mut data = mock_session();
+    data.context_window = Some(ContextWindow {
+        used_percentage: Some(85.0),
+        remaining_percentage: Some(15.0),
+        ..Default::default()
+    });
+    let config = default_config();
+    let output = registry
+        .render("context-percentage", &data, &config)
+        .unwrap();
+    assert_eq!(output.color_hint, Some("red".into()));
+}
+
+#[test]
+fn model_widget_has_no_color_hint() {
+    let registry = WidgetRegistry::new();
+    let data = mock_session();
+    let config = default_config();
+    let output = registry.render("model", &data, &config).unwrap();
+    assert_eq!(output.color_hint, None);
 }
 
 #[test]

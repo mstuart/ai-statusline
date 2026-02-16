@@ -17,6 +17,7 @@ impl Widget for SessionIdWidget {
                     display_width: 0,
                     priority: 20,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -29,6 +30,7 @@ impl Widget for SessionIdWidget {
             display_width,
             priority: 20,
             visible: true,
+            color_hint: None,
         }
     }
 }

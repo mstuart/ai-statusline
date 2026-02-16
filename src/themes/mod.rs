@@ -14,6 +14,11 @@ impl Theme {
             "dracula" => Self::dracula(),
             "gruvbox" => Self::gruvbox(),
             "monokai" => Self::monokai(),
+            "light" => Self::light(),
+            "high-contrast" => Self::high_contrast(),
+            "one-dark" => Self::one_dark(),
+            "tokyo-night" => Self::tokyo_night(),
+            "catppuccin" => Self::catppuccin(),
             _ => Self::default_theme(),
         }
     }
@@ -26,10 +31,30 @@ impl Theme {
             "dracula",
             "gruvbox",
             "monokai",
+            "light",
+            "high-contrast",
+            "one-dark",
+            "tokyo-night",
+            "catppuccin",
         ]
     }
 
     pub fn color(&self, role: &str) -> Option<&str> {
+        self.colors.get(role).map(|s| s.as_str())
+    }
+
+    pub fn role_for_widget(&self, widget_type: &str) -> Option<&str> {
+        let role = match widget_type {
+            "model" => "model",
+            "context-percentage" | "context-length" => "context_ok",
+            "git-branch" => "git_branch",
+            "git-status" => "git_clean",
+            "git-worktree" => "git_branch",
+            "session-cost" | "block-timer" => "cost",
+            "session-duration" | "api-duration" => "duration",
+            "separator" => "separator_fg",
+            _ => return None,
+        };
         self.colors.get(role).map(|s| s.as_str())
     }
 
@@ -137,6 +162,96 @@ impl Theme {
                 ("cost".into(), "#e6db74".into()),
                 ("duration".into(), "#f8f8f2".into()),
                 ("separator_fg".into(), "#75715e".into()),
+            ]),
+        }
+    }
+
+    fn light() -> Self {
+        Self {
+            name: "light".into(),
+            colors: HashMap::from([
+                ("model".into(), "#0550ae".into()),
+                ("context_ok".into(), "#116329".into()),
+                ("context_warn".into(), "#9a6700".into()),
+                ("context_critical".into(), "#cf222e".into()),
+                ("git_branch".into(), "#8250df".into()),
+                ("git_clean".into(), "#116329".into()),
+                ("git_dirty".into(), "#bc4c00".into()),
+                ("cost".into(), "#9a6700".into()),
+                ("duration".into(), "#24292f".into()),
+                ("separator_fg".into(), "#656d76".into()),
+            ]),
+        }
+    }
+
+    fn high_contrast() -> Self {
+        Self {
+            name: "high-contrast".into(),
+            colors: HashMap::from([
+                ("model".into(), "#71b7ff".into()),
+                ("context_ok".into(), "#3fb950".into()),
+                ("context_warn".into(), "#d29922".into()),
+                ("context_critical".into(), "#ff7b72".into()),
+                ("git_branch".into(), "#d2a8ff".into()),
+                ("git_clean".into(), "#3fb950".into()),
+                ("git_dirty".into(), "#f0883e".into()),
+                ("cost".into(), "#d29922".into()),
+                ("duration".into(), "#f0f6fc".into()),
+                ("separator_fg".into(), "#8b949e".into()),
+            ]),
+        }
+    }
+
+    fn one_dark() -> Self {
+        Self {
+            name: "one-dark".into(),
+            colors: HashMap::from([
+                ("model".into(), "#61afef".into()),
+                ("context_ok".into(), "#98c379".into()),
+                ("context_warn".into(), "#e5c07b".into()),
+                ("context_critical".into(), "#e06c75".into()),
+                ("git_branch".into(), "#c678dd".into()),
+                ("git_clean".into(), "#98c379".into()),
+                ("git_dirty".into(), "#d19a66".into()),
+                ("cost".into(), "#e5c07b".into()),
+                ("duration".into(), "#abb2bf".into()),
+                ("separator_fg".into(), "#5c6370".into()),
+            ]),
+        }
+    }
+
+    fn tokyo_night() -> Self {
+        Self {
+            name: "tokyo-night".into(),
+            colors: HashMap::from([
+                ("model".into(), "#7aa2f7".into()),
+                ("context_ok".into(), "#9ece6a".into()),
+                ("context_warn".into(), "#e0af68".into()),
+                ("context_critical".into(), "#f7768e".into()),
+                ("git_branch".into(), "#bb9af7".into()),
+                ("git_clean".into(), "#9ece6a".into()),
+                ("git_dirty".into(), "#ff9e64".into()),
+                ("cost".into(), "#e0af68".into()),
+                ("duration".into(), "#c0caf5".into()),
+                ("separator_fg".into(), "#565f89".into()),
+            ]),
+        }
+    }
+
+    fn catppuccin() -> Self {
+        Self {
+            name: "catppuccin".into(),
+            colors: HashMap::from([
+                ("model".into(), "#89b4fa".into()),
+                ("context_ok".into(), "#a6e3a1".into()),
+                ("context_warn".into(), "#f9e2af".into()),
+                ("context_critical".into(), "#f38ba8".into()),
+                ("git_branch".into(), "#cba6f7".into()),
+                ("git_clean".into(), "#a6e3a1".into()),
+                ("git_dirty".into(), "#fab387".into()),
+                ("cost".into(), "#f9e2af".into()),
+                ("duration".into(), "#cdd6f4".into()),
+                ("separator_fg".into(), "#585b70".into()),
             ]),
         }
     }

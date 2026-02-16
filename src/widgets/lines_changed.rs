@@ -26,6 +26,7 @@ impl Widget for LinesChangedWidget {
                 display_width: 0,
                 priority: 40,
                 visible: false,
+                color_hint: None,
             };
         }
 
@@ -41,6 +42,7 @@ impl Widget for LinesChangedWidget {
             display_width,
             priority: 40,
             visible: true,
+            color_hint: None,
         }
     }
 }

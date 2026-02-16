@@ -36,6 +36,7 @@ impl Widget for SessionDurationWidget {
                     display_width: 0,
                     priority: 65,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -48,6 +49,7 @@ impl Widget for SessionDurationWidget {
                     display_width: 0,
                     priority: 65,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -80,6 +82,7 @@ impl Widget for SessionDurationWidget {
             display_width,
             priority: 65,
             visible: true,
+            color_hint: None,
         }
     }
 }

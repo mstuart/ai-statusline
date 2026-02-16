@@ -17,6 +17,7 @@ impl Widget for SessionCostWidget {
                     display_width: 0,
                     priority: 70,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -29,6 +30,7 @@ impl Widget for SessionCostWidget {
                     display_width: 0,
                     priority: 70,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -64,6 +66,7 @@ impl Widget for SessionCostWidget {
             display_width,
             priority: 70,
             visible: true,
+            color_hint: None,
         }
     }
 }

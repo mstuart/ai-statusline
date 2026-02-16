@@ -17,6 +17,7 @@ impl Widget for ApiDurationWidget {
                     display_width: 0,
                     priority: 35,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -29,6 +30,7 @@ impl Widget for ApiDurationWidget {
                     display_width: 0,
                     priority: 35,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -41,6 +43,7 @@ impl Widget for ApiDurationWidget {
                     display_width: 0,
                     priority: 35,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -60,6 +63,7 @@ impl Widget for ApiDurationWidget {
             display_width,
             priority: 35,
             visible: true,
+            color_hint: None,
         }
     }
 }

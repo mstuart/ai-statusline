@@ -21,10 +21,10 @@ fn abbreviate_home(path: &str) -> String {
         if path == home {
             return "~".to_string();
         }
-        if let Some(rest) = path.strip_prefix(&home) {
-            if rest.starts_with('/') {
-                return format!("~{rest}");
-            }
+        if let Some(rest) = path.strip_prefix(&home)
+            && rest.starts_with('/')
+        {
+            return format!("~{rest}");
         }
     }
     path.to_string()
@@ -79,6 +79,7 @@ impl Widget for CwdWidget {
                     display_width: 0,
                     priority: 80,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -104,6 +105,7 @@ impl Widget for CwdWidget {
             display_width,
             priority: 80,
             visible: true,
+            color_hint: None,
         }
     }
 }

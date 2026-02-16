@@ -17,6 +17,7 @@ impl Widget for AgentNameWidget {
                     display_width: 0,
                     priority: 85,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -28,6 +29,7 @@ impl Widget for AgentNameWidget {
                 display_width: 0,
                 priority: 85,
                 visible: false,
+                color_hint: None,
             };
         }
 
@@ -37,6 +39,7 @@ impl Widget for AgentNameWidget {
             display_width,
             priority: 85,
             visible: true,
+            color_hint: None,
         }
     }
 }

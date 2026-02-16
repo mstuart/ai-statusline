@@ -18,6 +18,7 @@ impl Widget for ExceedsTokensWidget {
                     display_width,
                     priority: 95,
                     visible: true,
+                    color_hint: None,
                 }
             }
             _ => WidgetOutput {
@@ -25,6 +26,7 @@ impl Widget for ExceedsTokensWidget {
                 display_width: 0,
                 priority: 95,
                 visible: false,
+                color_hint: None,
             },
         }
     }

@@ -1,26 +1,26 @@
 use super::data::SessionData;
 use super::traits::{Widget, WidgetConfig, WidgetOutput};
-use unicode_width::UnicodeWidthStr;
 
-pub struct SeparatorWidget;
+pub struct FlexSeparatorWidget;
 
-impl Widget for SeparatorWidget {
+impl Widget for FlexSeparatorWidget {
     fn name(&self) -> &str {
-        "separator"
+        "flex-separator"
     }
 
     fn render(&self, _data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
-        let text = config
+        let fill_char = config
             .metadata
             .get("char")
             .filter(|c| !c.is_empty())
             .cloned()
-            .unwrap_or_else(|| "|".to_string());
+            .unwrap_or_else(|| " ".to_string());
 
-        let display_width = UnicodeWidthStr::width(text.as_str());
+        // Return a marker; the layout engine expands this to fill available width.
+        // display_width of 0 signals the layout engine to calculate the fill.
         WidgetOutput {
-            text,
-            display_width,
+            text: fill_char,
+            display_width: 0,
             priority: 100,
             visible: true,
             color_hint: None,

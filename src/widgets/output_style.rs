@@ -17,6 +17,7 @@ impl Widget for OutputStyleWidget {
                     display_width: 0,
                     priority: 30,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -29,6 +30,7 @@ impl Widget for OutputStyleWidget {
                     display_width: 0,
                     priority: 30,
                     visible: false,
+                    color_hint: None,
                 };
             }
         };
@@ -39,6 +41,7 @@ impl Widget for OutputStyleWidget {
             display_width,
             priority: 30,
             visible: true,
+            color_hint: None,
         }
     }
 }

@@ -23,6 +23,7 @@ impl Widget for TerminalWidthWidget {
             display_width,
             priority: 20,
             visible: true,
+            color_hint: None,
         }
     }
 }
