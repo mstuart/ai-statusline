@@ -1,11 +1,11 @@
 [package]
-name = "token-sentinel"
+name = "ai-statusline"
 version = "1.0.0"
 edition = "2024"
-description = "AI coding cost optimizer and token usage monitor - protect your budget with real-time tracking"
+description = "Customizable status line for AI coding assistants - real-time model, tokens, cost, git status display"
 license = "MIT"
-repository = "https://github.com/mstuart/token-sentinel"
-keywords = ["ai-coding", "token-tracking", "cost-optimization", "cli", "developer-tools"]
+repository = "https://github.com/mstuart/ai-statusline"
+keywords = ["ai-coding", "statusline", "terminal", "cli", "developer-tools"]
 categories = ["command-line-utilities", "development-tools"]
 
 [dependencies]

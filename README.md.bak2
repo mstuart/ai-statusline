@@ -1,4 +1,4 @@
-# ai-statusline
+# token-sentinel
 
 A high-performance, customizable status line for [Claude Code](https://claude.ai/code) CLI.
 
@@ -16,9 +16,9 @@ Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
 - 🚀 **Sub-millisecond rendering** — Zero lag, always fresh
 - 🔧 **Zero dependencies** — Single 1MB binary, no Node.js required
 
-## Why ai-statusline?
+## Why token-sentinel?
 
-| | ai-statusline | ccstatusline |
+| | token-sentinel | ccstatusline |
 |---|---|---|
 | **Language** | Rust (compiled binary) | TypeScript (bunx/npx) |
 | **Render time** | <1ms | ~200ms (npx overhead) |
@@ -36,10 +36,10 @@ Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
 
 ```bash
 # npm (downloads platform binary automatically)
-npm install -g ai-statusline
+npm install -g token-sentinel
 
 # Or direct binary
-curl -fsSL https://raw.githubusercontent.com/mstuart/ai-statusline/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/mstuart/token-sentinel/main/scripts/install.sh | sh
 
 # Or build from source
 cargo install --path .
@@ -53,7 +53,7 @@ Add to `~/.claude/settings.json`:
 {
   "statusLine": {
     "type": "command",
-    "command": "ai-statusline"
+    "command": "token-sentinel"
   }
 }
 ```
@@ -67,7 +67,7 @@ Restart Claude Code. Done.
 The easiest way to customize your status line:
 
 ```bash
-ai-statusline config
+token-sentinel config
 ```
 
 The TUI configurator lets you:
@@ -83,10 +83,10 @@ The TUI configurator lets you:
 Apply pre-built layouts instantly:
 
 ```bash
-ai-statusline preset full       # Two-line layout with everything
-ai-statusline preset minimal    # Just model + context %
-ai-statusline preset powerline  # Full layout with powerline arrows
-ai-statusline preset compact    # Single line, compact values
+token-sentinel preset full       # Two-line layout with everything
+token-sentinel preset minimal    # Just model + context %
+token-sentinel preset powerline  # Full layout with powerline arrows
+token-sentinel preset compact    # Single line, compact values
 ```
 
 ## Widgets
@@ -143,7 +143,7 @@ ai-statusline preset compact    # Single line, compact values
 Launch the interactive TUI to configure your status line visually:
 
 ```bash
-ai-statusline config
+token-sentinel config
 ```
 
 **Navigation:**
@@ -166,10 +166,10 @@ ai-statusline config
 
 ### Manual Configuration
 
-Config lives at `~/.config/ai-statusline/config.toml`. Generate a default:
+Config lives at `~/.config/token-sentinel/config.toml`. Generate a default:
 
 ```bash
-ai-statusline init
+token-sentinel init
 ```
 
 Or edit the TOML file directly for advanced customization.
@@ -260,15 +260,15 @@ Every widget supports:
 11 built-in themes optimized for popular terminal color schemes:
 
 ```bash
-ai-statusline theme list    # List all themes
-ai-statusline theme set nord  # Switch theme
+token-sentinel theme list    # List all themes
+token-sentinel theme set nord  # Switch theme
 ```
 
 Available: `default`, `solarized`, `nord`, `dracula`, `gruvbox`, `monokai`, `light`, `high-contrast`, `one-dark`, `tokyo-night`, `catppuccin`
 
 ## Color Support
 
-ai-statusline auto-detects terminal color capabilities:
+token-sentinel auto-detects terminal color capabilities:
 
 - **Truecolor** (24-bit): detected via `COLORTERM=truecolor`
 - **256-color**: detected via `TERM=*256color*`
@@ -278,22 +278,22 @@ ai-statusline auto-detects terminal color capabilities:
 Override with `--color-level`:
 
 ```bash
-ai-statusline --color-level truecolor
-ai-statusline --color-level none
+token-sentinel --color-level truecolor
+token-sentinel --color-level none
 ```
 
 ## CLI Commands
 
 ```bash
-ai-statusline              # Render status line (reads JSON from stdin)
-ai-statusline init         # Generate default config file
-ai-statusline doctor       # Check environment compatibility
-ai-statusline theme list   # List available themes
-ai-statusline theme set <name>  # Switch theme
-ai-statusline preset <name>     # Apply a preset layout
-ai-statusline config            # Interactive TUI configurator
-ai-statusline dump-schema       # Print expected JSON input schema
-ai-statusline --version         # Show version
+token-sentinel              # Render status line (reads JSON from stdin)
+token-sentinel init         # Generate default config file
+token-sentinel doctor       # Check environment compatibility
+token-sentinel theme list   # List available themes
+token-sentinel theme set <name>  # Switch theme
+token-sentinel preset <name>     # Apply a preset layout
+token-sentinel config            # Interactive TUI configurator
+token-sentinel dump-schema       # Print expected JSON input schema
+token-sentinel --version         # Show version
 ```
 
 ## Performance
@@ -307,23 +307,23 @@ Benchmarked on Apple M1:
 | Memory usage | 1.2 MB |
 | Startup time | <1ms |
 
-Claude Code debounces status line updates at 300ms. ai-statusline completes in <1ms, ensuring the status line is always fresh and never causes UI lag.
+Claude Code debounces status line updates at 300ms. token-sentinel completes in <1ms, ensuring the status line is always fresh and never causes UI lag.
 
 ## How It Works
 
-Claude Code pipes JSON session data to your status line script via stdin. ai-statusline reads this JSON, applies your configuration, and prints formatted ANSI text to stdout. No transcript parsing, no file watching, no external dependencies.
+Claude Code pipes JSON session data to your status line script via stdin. token-sentinel reads this JSON, applies your configuration, and prints formatted ANSI text to stdout. No transcript parsing, no file watching, no external dependencies.
 
 ```
-Claude Code → JSON stdin → ai-statusline → ANSI stdout → Terminal
+Claude Code → JSON stdin → token-sentinel → ANSI stdout → Terminal
 ```
 
 ## Building from Source
 
 ```bash
-git clone https://github.com/mstuart/ai-statusline
-cd ai-statusline
+git clone https://github.com/mstuart/token-sentinel
+cd token-sentinel
 cargo build --release
-# Binary at ./target/release/ai-statusline
+# Binary at ./target/release/token-sentinel
 ```
 
 ## License
