@@ -5,7 +5,19 @@ pub struct TerminalWidthWidget;
 
 impl Widget for TerminalWidthWidget {
     fn name(&self) -> &str { "terminal-width" }
-    fn render(&self, _data: &SessionData, _config: &WidgetConfig) -> WidgetOutput {
-        WidgetOutput { text: String::new(), display_width: 0, priority: 50, visible: false }
+
+    fn render(&self, _data: &SessionData, config: &WidgetConfig) -> WidgetOutput {
+        let cols = crossterm::terminal::size()
+            .map(|(w, _)| w)
+            .unwrap_or(80);
+
+        let text = if config.raw_value {
+            format!("{}", cols)
+        } else {
+            format!("{} cols", cols)
+        };
+
+        let display_width = text.len();
+        WidgetOutput { text, display_width, priority: 20, visible: true }
     }
 }

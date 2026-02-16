@@ -5,7 +5,20 @@ pub struct VersionWidget;
 
 impl Widget for VersionWidget {
     fn name(&self) -> &str { "version" }
-    fn render(&self, _data: &SessionData, _config: &WidgetConfig) -> WidgetOutput {
-        WidgetOutput { text: String::new(), display_width: 0, priority: 50, visible: false }
+
+    fn render(&self, data: &SessionData, _config: &WidgetConfig) -> WidgetOutput {
+        let ver = match &data.version {
+            Some(v) => v,
+            None => return WidgetOutput { text: String::new(), display_width: 0, priority: 25, visible: false },
+        };
+
+        let text = if ver.starts_with('v') {
+            ver.clone()
+        } else {
+            format!("v{}", ver)
+        };
+
+        let display_width = text.len();
+        WidgetOutput { text, display_width, priority: 25, visible: true }
     }
 }

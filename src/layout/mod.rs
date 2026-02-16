@@ -2,7 +2,7 @@ use unicode_width::UnicodeWidthStr;
 
 use crate::config::Config;
 use crate::render::Renderer;
-use crate::widgets::{SessionData, WidgetConfig, WidgetOutput, WidgetRegistry};
+use crate::widgets::{SessionData, WidgetOutput, WidgetRegistry};
 
 pub struct LayoutEngine<'a> {
     config: &'a Config,
