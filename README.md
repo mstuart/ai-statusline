@@ -9,6 +9,13 @@ Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
 📁 my-project | 🌿 main +3 ~2 | +156 -23 | v2.1.31
 ```
 
+**✨ Features:**
+- 🎨 **Interactive TUI configurator** — Visual configuration with live preview
+- ⚡ **26 customizable widgets** — Model, tokens, cost, git status, and more
+- 🎭 **11 built-in themes** — Dracula, Nord, Tokyo Night, Catppuccin, and more
+- 🚀 **Sub-millisecond rendering** — Zero lag, always fresh
+- 🔧 **Zero dependencies** — Single 1MB binary, no Node.js required
+
 ## Why claude-status?
 
 | | claude-status | ccstatusline |
@@ -53,7 +60,27 @@ Add to `~/.claude/settings.json`:
 
 Restart Claude Code. Done.
 
-### Apply a preset
+### Configure Your Status Line
+
+**🎨 Interactive TUI (Recommended for Beginners)**
+
+The easiest way to customize your status line:
+
+```bash
+claude-status config
+```
+
+The TUI configurator lets you:
+- **Add/remove widgets** — Choose from 26 available widgets with live preview
+- **Reorder widgets** — Use `j`/`k` to move widgets up/down
+- **Switch themes** — Browse and preview 11 built-in themes instantly
+- **Configure powerline** — Toggle powerline mode, change separators, enable auto-align
+- **Manage layouts** — Add/remove status lines, adjust flex modes
+- **Save instantly** — `Ctrl-S` to save, changes apply immediately to Claude Code
+
+**⚡ Quick Presets**
+
+Apply pre-built layouts instantly:
 
 ```bash
 claude-status preset full       # Two-line layout with everything
@@ -111,11 +138,41 @@ claude-status preset compact    # Single line, compact values
 
 ## Configuration
 
+### TUI Configurator
+
+Launch the interactive TUI to configure your status line visually:
+
+```bash
+claude-status config
+```
+
+**Navigation:**
+- `Tab` / `Shift-Tab` — Switch between tabs (Widgets, Theme, Powerline, Layout, Preview)
+- `↑` / `↓` — Navigate items
+- `←` / `→` — Switch between status lines (in Widgets tab)
+- `Enter` / `Space` — Select/toggle options
+- `a` — Add widget
+- `d` / `Delete` — Remove widget
+- `j` / `k` — Move widget down/up
+- `Ctrl-S` — Save configuration
+- `q` — Quit
+
+**Tabs:**
+- **Widgets** — Add, remove, and reorder widgets on each status line
+- **Theme** — Browse and select from 11 built-in color themes
+- **Powerline** — Toggle powerline mode, cycle separators, enable auto-align
+- **Layout** — Add/remove status lines, change flex mode
+- **Preview** — Live preview of your current configuration
+
+### Manual Configuration
+
 Config lives at `~/.config/claude-status/config.toml`. Generate a default:
 
 ```bash
 claude-status init
 ```
+
+Or edit the TOML file directly for advanced customization.
 
 ### Example config
 
