@@ -20,7 +20,7 @@ Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
 | **Data source** | Native JSON API (stdin) | Transcript file parsing |
 | **Accuracy** | Always correct (official API) | Breaks across models/versions |
 | **Memory** | 1.2 MB | ~50 MB (Node.js runtime) |
-| **Widgets** | 25 | ~15 |
+| **Widgets** | 26 | ~15 |
 | **Config format** | TOML (with comments) | JSON |
 
 ## Quick Start
@@ -64,7 +64,7 @@ claudeline preset compact    # Single line, compact values
 
 ## Widgets
 
-25 built-in widgets, all reading from Claude Code's native JSON API:
+26 built-in widgets, all reading from Claude Code's native JSON API:
 
 ### Core Metrics
 | Widget | Type | Description |
@@ -106,6 +106,7 @@ claudeline preset compact    # Single line, compact values
 | Custom Command | `custom-command` | Run any shell command, display output |
 | Custom Text | `custom-text` | Static text with emoji support |
 | Separator | `separator` | Visual divider between widgets |
+| Flex Separator | `flex-separator` | Flexible spacer that pushes widgets apart |
 | Terminal Width | `terminal-width` | Current terminal width in columns |
 
 ## Configuration
@@ -195,17 +196,18 @@ Every widget supports:
 | `custom-command` | `command` | shell cmd | Command to execute |
 | `custom-text` | `text` | any string | Static text to display |
 | `separator` | `char` | any char | Separator character |
+| `flex-separator` | `char` | any char | Fill character (default: space) |
 
 ## Themes
 
-6 built-in themes optimized for popular terminal color schemes:
+11 built-in themes optimized for popular terminal color schemes:
 
 ```bash
 claudeline theme list    # List all themes
 claudeline theme set nord  # Switch theme
 ```
 
-Available: `default`, `solarized`, `nord`, `dracula`, `gruvbox`, `monokai`
+Available: `default`, `solarized`, `nord`, `dracula`, `gruvbox`, `monokai`, `light`, `high-contrast`, `one-dark`, `tokyo-night`, `catppuccin`
 
 ## Color Support
 
@@ -232,6 +234,7 @@ claudeline doctor       # Check environment compatibility
 claudeline theme list   # List available themes
 claudeline theme set <name>  # Switch theme
 claudeline preset <name>     # Apply a preset layout
+claudeline config            # Interactive TUI configurator
 claudeline dump-schema       # Print expected JSON input schema
 claudeline --version         # Show version
 ```
