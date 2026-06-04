@@ -5,10 +5,10 @@ use clap::Parser;
 
 mod cli;
 
-use claude_status::config::Config;
-use claude_status::layout::LayoutEngine;
-use claude_status::render::Renderer;
-use claude_status::widgets::{SessionData, WidgetRegistry};
+use ai_statusline::config::Config;
+use ai_statusline::layout::LayoutEngine;
+use ai_statusline::render::Renderer;
+use ai_statusline::widgets::{SessionData, WidgetRegistry};
 
 #[derive(Parser)]
 #[command(

@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use chrono::Datelike;
 use clap::Subcommand;
 
-use claude_status::config::{Config, LineWidgetConfig, PowerlineConfig};
-use claude_status::themes::Theme;
+use ai_statusline::config::{Config, LineWidgetConfig, PowerlineConfig};
+use ai_statusline::themes::Theme;
 
 #[derive(Subcommand)]
 pub enum Commands {
@@ -63,7 +63,7 @@ pub enum LicenseAction {
 pub fn handle_command(cmd: Commands) {
     match cmd {
         Commands::Config => {
-            if let Err(e) = claude_status::tui::run_tui() {
+            if let Err(e) = ai_statusline::tui::run_tui() {
                 eprintln!("TUI error: {e}");
             }
         }
@@ -192,7 +192,7 @@ fn cmd_doctor() {
     }
 
     // License status
-    let pro = claude_status::license::is_pro();
+    let pro = ai_statusline::license::is_pro();
     if pro {
         print_check(true, "License: Pro (active)");
     } else {
@@ -375,7 +375,7 @@ fn preset_compact() -> Config {
 }
 
 fn cmd_license_activate(key: &str) {
-    let validator = claude_status::license::LicenseValidator::new();
+    let validator = ai_statusline::license::LicenseValidator::new();
     match validator.activate(key) {
         Ok(info) => {
             println!("License activated successfully!");
@@ -396,7 +396,7 @@ fn cmd_license_activate(key: &str) {
 }
 
 fn cmd_license_deactivate() {
-    let validator = claude_status::license::LicenseValidator::new();
+    let validator = ai_statusline::license::LicenseValidator::new();
     match validator.deactivate() {
         Ok(()) => {
             println!("License deactivated. Pro features are now disabled.");
@@ -408,7 +408,7 @@ fn cmd_license_deactivate() {
 }
 
 fn cmd_license_status() {
-    match claude_status::license::check_pro() {
+    match ai_statusline::license::check_pro() {
         Some(info) => {
             println!("claude-status Pro");
             println!("=================");
@@ -432,9 +432,9 @@ fn cmd_license_status() {
             println!("  Machine:  {}", info.machine_id);
         }
         None => {
-            let storage = claude_status::license::LicenseStorage::new();
+            let storage = ai_statusline::license::LicenseStorage::new();
             if let Some(key) = storage.load_key() {
-                let validator = claude_status::license::LicenseValidator::new();
+                let validator = ai_statusline::license::LicenseValidator::new();
                 let info = validator.validate(&key);
                 println!("claude-status Free (license issue)");
                 println!("==================================");
@@ -465,7 +465,7 @@ fn cmd_license_status() {
 }
 
 fn cmd_stats(period: &str) {
-    if !claude_status::license::is_pro() {
+    if !ai_statusline::license::is_pro() {
         println!("claude-status Stats (Pro feature)");
         println!("=================================");
         println!();
@@ -476,7 +476,7 @@ fn cmd_stats(period: &str) {
         return;
     }
 
-    let tracker = match claude_status::CostTracker::open() {
+    let tracker = match ai_statusline::CostTracker::open() {
         Ok(t) => t,
         Err(e) => {
             eprintln!("Error opening cost database: {e}");
