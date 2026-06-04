@@ -143,27 +143,24 @@ impl Widget for ModelSuggestWidget {
 
         let complexity = Self::analyze_complexity(data);
 
-        let (suggested_model, savings) =
-            match Self::suggest(current_tier, complexity, min_savings) {
-                Some(s) => s,
-                None => {
-                    return WidgetOutput {
-                        text: String::new(),
-                        display_width: 0,
-                        priority: 60,
-                        visible: false,
-                        color_hint: None,
-                    };
-                }
-            };
+        let (suggested_model, savings) = match Self::suggest(current_tier, complexity, min_savings)
+        {
+            Some(s) => s,
+            None => {
+                return WidgetOutput {
+                    text: String::new(),
+                    display_width: 0,
+                    priority: 60,
+                    visible: false,
+                    color_hint: None,
+                };
+            }
+        };
 
         let text = if config.raw_value {
             format!("{}:{:.2}", suggested_model, savings)
         } else {
-            format!(
-                "\u{1F4A1} Try {} -> Save ${:.2}",
-                suggested_model, savings
-            )
+            format!("\u{1F4A1} Try {} -> Save ${:.2}", suggested_model, savings)
         };
 
         let display_width = text.len();

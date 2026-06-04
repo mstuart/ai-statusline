@@ -167,31 +167,33 @@ fn multiline_config_produces_multiple_lines() {
     use ai_statusline::config::LineWidgetConfig;
     use std::collections::HashMap;
 
-    let mut config = Config::default();
-    config.lines = vec![
-        vec![LineWidgetConfig {
-            widget_type: "model".into(),
-            id: "1".into(),
-            color: None,
-            background_color: None,
-            bold: None,
-            raw_value: false,
-            padding: None,
-            merge_next: false,
-            metadata: HashMap::new(),
-        }],
-        vec![LineWidgetConfig {
-            widget_type: "session-cost".into(),
-            id: "2".into(),
-            color: None,
-            background_color: None,
-            bold: None,
-            raw_value: true,
-            padding: None,
-            merge_next: false,
-            metadata: HashMap::new(),
-        }],
-    ];
+    let config = Config {
+        lines: vec![
+            vec![LineWidgetConfig {
+                widget_type: "model".into(),
+                id: "1".into(),
+                color: None,
+                background_color: None,
+                bold: None,
+                raw_value: false,
+                padding: None,
+                merge_next: false,
+                metadata: HashMap::new(),
+            }],
+            vec![LineWidgetConfig {
+                widget_type: "session-cost".into(),
+                id: "2".into(),
+                color: None,
+                background_color: None,
+                bold: None,
+                raw_value: true,
+                padding: None,
+                merge_next: false,
+                metadata: HashMap::new(),
+            }],
+        ],
+        ..Config::default()
+    };
 
     let renderer = Renderer::detect("none");
     let registry = WidgetRegistry::new();
