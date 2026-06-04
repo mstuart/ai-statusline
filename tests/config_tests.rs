@@ -1,4 +1,4 @@
-use ai_statusline::config::Config;
+use ai_statusline::config::{Config, PowerlineConfig};
 
 #[test]
 fn default_config_has_sensible_values() {
@@ -72,14 +72,19 @@ fn config_powerline_defaults() {
 fn config_from_toml_with_custom_theme() {
     // Build custom config programmatically (lines is Vec<Vec<LineWidgetConfig>>,
     // so direct TOML [[lines]] won't map correctly). Verify via roundtrip instead.
-    let mut config = Config::default();
-    config.theme = "solarized".into();
-    config.color_level = "truecolor".into();
-    config.global_bold = true;
-    config.compact_threshold = 80;
-    config.default_separator = " :: ".into();
-    config.powerline.enabled = true;
-    config.powerline.auto_align = true;
+    let config = Config {
+        theme: "solarized".into(),
+        color_level: "truecolor".into(),
+        global_bold: true,
+        compact_threshold: 80,
+        default_separator: " :: ".into(),
+        powerline: PowerlineConfig {
+            enabled: true,
+            auto_align: true,
+            ..Default::default()
+        },
+        ..Config::default()
+    };
 
     let serialized = config.to_toml();
     let deserialized: Config =

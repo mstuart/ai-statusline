@@ -492,8 +492,7 @@ fn cmd_stats(period: &str) {
         .and_utc()
         .timestamp();
     let yesterday_start = today_start - 86400;
-    let week_start = today_start
-        - (now.weekday().num_days_from_monday() as i64 * 86400);
+    let week_start = today_start - (now.weekday().num_days_from_monday() as i64 * 86400);
     let month_start = now
         .date_naive()
         .with_day(1)
@@ -521,10 +520,7 @@ fn cmd_stats(period: &str) {
     } else {
         String::new()
     };
-    println!(
-        "  Daily:   ${:.2}{}",
-        today_cost, daily_change
-    );
+    println!("  Daily:   ${:.2}{}", today_cost, daily_change);
 
     // Weekly
     let weekly_cost = tracker.session_cost_range(week_start, now_ts);

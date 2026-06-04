@@ -84,8 +84,7 @@ impl LicenseStorage {
     /// Save a validation cache to disk.
     pub fn save_cache(&self, cache: &ValidationCache) -> io::Result<()> {
         self.ensure_dir()?;
-        let json =
-            serde_json::to_string_pretty(cache).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+        let json = serde_json::to_string_pretty(cache).map_err(io::Error::other)?;
         fs::write(self.cache_path(), json)
     }
 
@@ -104,8 +103,8 @@ impl Default for LicenseStorage {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::Utc;
     use crate::license::LicenseTier;
+    use chrono::Utc;
 
     #[test]
     fn test_save_and_load_key() {
@@ -123,7 +122,8 @@ mod tests {
 
     #[test]
     fn test_load_key_missing() {
-        let dir = std::env::temp_dir().join(format!("claude-status-test-missing-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("claude-status-test-missing-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         let storage = LicenseStorage::with_dir(dir.clone());
 
@@ -133,7 +133,8 @@ mod tests {
 
     #[test]
     fn test_remove_key() {
-        let dir = std::env::temp_dir().join(format!("claude-status-test-rm-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("claude-status-test-rm-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         let storage = LicenseStorage::with_dir(dir.clone());
 
@@ -148,7 +149,8 @@ mod tests {
 
     #[test]
     fn test_save_and_load_cache() {
-        let dir = std::env::temp_dir().join(format!("claude-status-test-cache-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("claude-status-test-cache-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         let storage = LicenseStorage::with_dir(dir.clone());
 
@@ -171,7 +173,10 @@ mod tests {
 
     #[test]
     fn test_remove_cache() {
-        let dir = std::env::temp_dir().join(format!("claude-status-test-rm-cache-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!(
+            "claude-status-test-rm-cache-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         let storage = LicenseStorage::with_dir(dir.clone());
 

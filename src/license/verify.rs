@@ -181,10 +181,9 @@ impl LicenseValidator {
             return false;
         }
 
-        segments.iter().all(|seg| {
-            seg.len() == KEY_SEGMENT_LEN
-                && seg.chars().all(|c| c.is_ascii_hexdigit())
-        })
+        segments
+            .iter()
+            .all(|seg| seg.len() == KEY_SEGMENT_LEN && seg.chars().all(|c| c.is_ascii_hexdigit()))
     }
 
     /// Offline validation: check format + checksum only
@@ -283,9 +282,7 @@ impl LicenseValidator {
             .output()
             .ok()
             .and_then(|out| String::from_utf8(out.stdout).ok())
-            .and_then(|output| {
-                output.lines().nth(1).map(|line| line.trim().to_string())
-            })
+            .and_then(|output| output.lines().nth(1).map(|line| line.trim().to_string()))
             .unwrap_or_else(|| {
                 let user = std::env::var("USERNAME").unwrap_or_default();
                 let comp = std::env::var("COMPUTERNAME").unwrap_or_default();
@@ -309,6 +306,7 @@ impl Default for LicenseValidator {
 }
 
 /// Generate a valid license key (for testing/server use).
+#[allow(dead_code)]
 pub fn generate_key() -> String {
     use std::time::{SystemTime, UNIX_EPOCH};
     let seed = SystemTime::now()
@@ -352,17 +350,23 @@ mod tests {
 
     #[test]
     fn test_validate_format_valid() {
-        assert!(LicenseValidator::validate_format("CS-PRO-A3F2-9D8E-C4B1-7F0A"));
+        assert!(LicenseValidator::validate_format(
+            "CS-PRO-A3F2-9D8E-C4B1-7F0A"
+        ));
     }
 
     #[test]
     fn test_validate_format_lowercase_valid() {
-        assert!(LicenseValidator::validate_format("CS-PRO-a3f2-9d8e-c4b1-7f0a"));
+        assert!(LicenseValidator::validate_format(
+            "CS-PRO-a3f2-9d8e-c4b1-7f0a"
+        ));
     }
 
     #[test]
     fn test_validate_format_wrong_prefix() {
-        assert!(!LicenseValidator::validate_format("CL-PRO-A3F2-9D8E-C4B1-7F0A"));
+        assert!(!LicenseValidator::validate_format(
+            "CL-PRO-A3F2-9D8E-C4B1-7F0A"
+        ));
     }
 
     #[test]
@@ -372,17 +376,23 @@ mod tests {
 
     #[test]
     fn test_validate_format_too_many_segments() {
-        assert!(!LicenseValidator::validate_format("CS-PRO-A3F2-9D8E-C4B1-7F0A-AAAA"));
+        assert!(!LicenseValidator::validate_format(
+            "CS-PRO-A3F2-9D8E-C4B1-7F0A-AAAA"
+        ));
     }
 
     #[test]
     fn test_validate_format_non_hex_chars() {
-        assert!(!LicenseValidator::validate_format("CS-PRO-ZZZZ-9D8E-C4B1-7F0A"));
+        assert!(!LicenseValidator::validate_format(
+            "CS-PRO-ZZZZ-9D8E-C4B1-7F0A"
+        ));
     }
 
     #[test]
     fn test_validate_format_wrong_segment_length() {
-        assert!(!LicenseValidator::validate_format("CS-PRO-A3F-9D8E-C4B1-7F0A"));
+        assert!(!LicenseValidator::validate_format(
+            "CS-PRO-A3F-9D8E-C4B1-7F0A"
+        ));
     }
 
     #[test]
@@ -393,13 +403,19 @@ mod tests {
     #[test]
     fn test_generate_key_has_valid_format() {
         let key = generate_key();
-        assert!(LicenseValidator::validate_format(&key), "Generated key should have valid format: {key}");
+        assert!(
+            LicenseValidator::validate_format(&key),
+            "Generated key should have valid format: {key}"
+        );
     }
 
     #[test]
     fn test_generate_key_passes_checksum() {
         let key = generate_key();
-        assert!(LicenseValidator::verify_checksum(&key), "Generated key should pass checksum: {key}");
+        assert!(
+            LicenseValidator::verify_checksum(&key),
+            "Generated key should pass checksum: {key}"
+        );
     }
 
     #[test]
