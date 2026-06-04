@@ -1,4 +1,4 @@
-use claude_status::config::Config;
+use ai_statusline::config::Config;
 
 #[test]
 fn default_config_has_sensible_values() {
