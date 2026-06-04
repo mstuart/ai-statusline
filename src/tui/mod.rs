@@ -112,7 +112,10 @@ pub fn run_tui() -> io::Result<()> {
 fn run_loop<B: ratatui::backend::Backend>(
     terminal: &mut Terminal<B>,
     state: &mut TuiState,
-) -> io::Result<()> {
+) -> io::Result<()>
+where
+    io::Error: From<B::Error>,
+{
     loop {
         terminal.draw(|f| draw_ui(f, state))?;
 
