@@ -1,5 +1,14 @@
-# ai-statusline
+<div align="center">
+  <img src="docs/assets/logo.svg" alt="ai-statusline — Customizable status line for AI coding assistants - real-time display of model, tokens, cost, git status, and more" width="720">
+</div>
 
+<p align="center"><strong>Customizable status line for AI coding assistants - real-time display of model, tokens, cost, git status, and more</strong></p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+</p>
+
+---
 A high-performance, customizable status line for [Claude Code](https://claude.ai/code) CLI.
 
 Built in Rust. Zero runtime dependencies. Sub-millisecond rendering.
