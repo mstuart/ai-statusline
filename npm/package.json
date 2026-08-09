@@ -2,22 +2,28 @@
   "name": "claude-status",
   "version": "1.0.0",
   "description": "A high-performance, customizable status line for Claude Code CLI",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mstuart/claude-status.git"
-  },
   "keywords": [
     "claude-code",
     "statusline",
     "terminal",
     "cli"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mstuart/claude-status.git"
+  },
+  "license": "MIT",
   "bin": {
     "claude-status": "./bin/cli.js"
   },
   "scripts": {
+    "check": "ultracite check",
+    "fix": "ultracite fix",
     "postinstall": "node install.js"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.6",
+    "ultracite": "7.10.2"
   },
   "os": [
     "darwin",
