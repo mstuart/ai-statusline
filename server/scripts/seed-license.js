@@ -36,13 +36,18 @@ if (!pattern.test(key)) {
   process.exit(1);
 }
 
+let normalizedExpires = null;
+if (tier !== "lifetime" && expires) {
+  normalizedExpires = new Date(expires).toISOString();
+}
+
 const licenseData = {
-  tier,
-  expires: tier === "lifetime" ? null : expires ? new Date(expires).toISOString() : null,
-  machines: [],
-  revoked: false,
   created_at: new Date().toISOString(),
   email,
+  expires: normalizedExpires,
+  machines: [],
+  revoked: false,
+  tier,
 };
 
 const jsonValue = JSON.stringify(licenseData);
@@ -52,6 +57,4 @@ console.log(JSON.stringify(licenseData, null, 2));
 console.log("");
 console.log("Run this wrangler command to seed the license:");
 console.log("");
-console.log(
-  `wrangler kv:key put --binding LICENSES "${key}" '${jsonValue}'`
-);
+console.log(`wrangler kv:key put --binding LICENSES "${key}" '${jsonValue}'`);
