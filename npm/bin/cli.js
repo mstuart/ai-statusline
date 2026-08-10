@@ -1,18 +1,20 @@
 #!/usr/bin/env node
-const { spawnSync } = require('child_process');
-const path = require('path');
+const { spawnSync } = require("node:child_process");
+const path = require("node:path");
 
-const ext = process.platform === 'win32' ? '.exe' : '';
-const bin = path.join(__dirname, `claude-status-bin${ext}`);
+const ext = process.platform === "win32" ? ".exe" : "";
+const bin = path.join(import.meta.dirname, `claude-status-bin${ext}`);
 
 const result = spawnSync(bin, process.argv.slice(2), {
-  stdio: 'inherit',
+  stdio: "inherit",
   windowsHide: false,
 });
 
 if (result.error) {
-  if (result.error.code === 'ENOENT') {
-    console.error('claude-status binary not found. Try reinstalling: npm install -g claude-status');
+  if (result.error.code === "ENOENT") {
+    console.error(
+      "claude-status binary not found. Try reinstalling: npm install -g claude-status"
+    );
   } else {
     console.error(result.error.message);
   }

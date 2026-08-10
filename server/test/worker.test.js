@@ -1,6 +1,9 @@
 const { describe, it, beforeEach } = require("node:test");
 const assert = require("node:assert/strict");
 
+const LICENSE_KEY_PATTERN =
+  /^CS-PRO-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$/;
+
 // Import the worker module
 // We'll test the exported functions by simulating the Worker environment
 
@@ -12,18 +15,25 @@ class MockKV {
     this.store = new Map();
   }
 
-  async get(key, opts) {
+  get(key, opts) {
     const value = this.store.get(key);
-    if (!value) return null;
-    if (opts?.type === "json") return JSON.parse(value);
+    if (!value) {
+      return null;
+    }
+    if (opts?.type === "json") {
+      return JSON.parse(value);
+    }
     return value;
   }
 
-  async put(key, value) {
-    this.store.set(key, typeof value === "string" ? value : JSON.stringify(value));
+  put(key, value) {
+    this.store.set(
+      key,
+      typeof value === "string" ? value : JSON.stringify(value)
+    );
   }
 
-  async delete(key) {
+  delete(key) {
     this.store.delete(key);
   }
 
@@ -32,28 +42,16 @@ class MockKV {
   }
 }
 
-/**
- * Create a mock Request
- */
-function mockRequest(url, method, body) {
-  return {
-    method,
-    url: `https://api.claude-status.dev${url}`,
-    json: async () => body,
-    headers: new Map(),
-  };
-}
-
 // Since the worker is an ES module, we test via integration-style tests
 // by validating the key format function and the expected API contract
 
 describe("License Key Format Validation", () => {
   function validateKeyFormat(key) {
-    if (typeof key !== "string") return false;
+    if (typeof key !== "string") {
+      return false;
+    }
     const trimmed = key.trim();
-    const pattern =
-      /^CS-PRO-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$/;
-    return pattern.test(trimmed);
+    return LICENSE_KEY_PATTERN.test(trimmed);
   }
 
   it("accepts valid uppercase key", () => {
@@ -112,8 +110,6 @@ describe("API Contract", () => {
 
   it("verify response has expected shape for valid license", () => {
     const response = {
-      valid: true,
-      tier: "pro",
       expires: null,
       features: [
         "cost_tracking",
@@ -122,6 +118,8 @@ describe("API Contract", () => {
         "model_suggestions",
         "historical_stats",
       ],
+      tier: "pro",
+      valid: true,
     };
     assert.equal(typeof response.valid, "boolean");
     assert.equal(typeof response.tier, "string");
@@ -131,8 +129,8 @@ describe("API Contract", () => {
 
   it("verify response has expected shape for invalid license", () => {
     const response = {
-      valid: false,
       reason: "not_found",
+      valid: false,
     };
     assert.equal(response.valid, false);
     assert.equal(typeof response.reason, "string");
@@ -140,12 +138,12 @@ describe("API Contract", () => {
 
   it("activate response has machine count", () => {
     const response = {
-      success: true,
-      tier: "pro",
       expires: null,
       features: ["cost_tracking"],
-      machines_used: 1,
       machines_max: 3,
+      machines_used: 1,
+      success: true,
+      tier: "pro",
     };
     assert.equal(typeof response.machines_used, "number");
     assert.equal(typeof response.machines_max, "number");
@@ -154,8 +152,8 @@ describe("API Contract", () => {
 
   it("deactivate response has machine count", () => {
     const response = {
-      success: true,
       machines_used: 0,
+      success: true,
     };
     assert.equal(typeof response.machines_used, "number");
   });
@@ -164,12 +162,12 @@ describe("API Contract", () => {
 describe("KV Data Schema", () => {
   it("license record has required fields", () => {
     const license = {
-      tier: "pro",
+      created_at: "2026-02-15T00:00:00Z",
+      email: "user@example.com",
       expires: "2027-02-15T00:00:00Z",
       machines: ["machine1", "machine2"],
       revoked: false,
-      created_at: "2026-02-15T00:00:00Z",
-      email: "user@example.com",
+      tier: "pro",
     };
     assert.ok(["pro", "lifetime"].includes(license.tier));
     assert.ok(Array.isArray(license.machines));
@@ -179,28 +177,28 @@ describe("KV Data Schema", () => {
 
   it("lifetime license has no expiry", () => {
     const license = {
-      tier: "lifetime",
+      created_at: "2026-02-15T00:00:00Z",
+      email: "user@example.com",
       expires: null,
       machines: [],
       revoked: false,
-      created_at: "2026-02-15T00:00:00Z",
-      email: "user@example.com",
+      tier: "lifetime",
     };
     assert.equal(license.expires, null);
     assert.equal(license.tier, "lifetime");
   });
 
   it("machine limit defaults to 3", () => {
-    const maxMachines = parseInt("3", 10);
+    const maxMachines = Number.parseInt("3", 10);
     assert.equal(maxMachines, 3);
   });
 
   it("expired license is rejected", () => {
     const license = {
-      tier: "pro",
       expires: "2025-01-01T00:00:00Z",
       machines: [],
       revoked: false,
+      tier: "pro",
     };
     const expiresDate = new Date(license.expires);
     const now = new Date();
@@ -218,12 +216,12 @@ describe("Mock KV Operations", () => {
   it("stores and retrieves license data", async () => {
     const key = "CS-PRO-A3F2-9D8E-C4B1-7F0A";
     const data = {
-      tier: "pro",
+      created_at: new Date().toISOString(),
+      email: "test@example.com",
       expires: null,
       machines: [],
       revoked: false,
-      created_at: new Date().toISOString(),
-      email: "test@example.com",
+      tier: "pro",
     };
 
     kv.seed(key, data);
@@ -239,7 +237,7 @@ describe("Mock KV Operations", () => {
 
   it("updates machine list", async () => {
     const key = "CS-PRO-A3F2-9D8E-C4B1-7F0A";
-    kv.seed(key, { tier: "pro", machines: [], revoked: false });
+    kv.seed(key, { machines: [], revoked: false, tier: "pro" });
 
     const data = await kv.get(key, { type: "json" });
     data.machines.push("machine-1");
@@ -253,9 +251,9 @@ describe("Mock KV Operations", () => {
     const key = "CS-PRO-A3F2-9D8E-C4B1-7F0A";
     const maxMachines = 3;
     kv.seed(key, {
-      tier: "pro",
       machines: ["m1", "m2", "m3"],
       revoked: false,
+      tier: "pro",
     });
 
     const data = await kv.get(key, { type: "json" });

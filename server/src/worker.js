@@ -15,9 +15,9 @@
  */
 
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Origin": "*",
 };
 
 const PRO_FEATURES = [
@@ -28,11 +28,14 @@ const PRO_FEATURES = [
   "historical_stats",
 ];
 
+const LICENSE_KEY_PATTERN =
+  /^CS-PRO-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$/;
+
 export default {
-  async fetch(request, env) {
+  fetch(request, env) {
     // Handle CORS preflight
     if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: CORS_HEADERS });
+      return new Response(null, { headers: CORS_HEADERS, status: 204 });
     }
 
     const url = new URL(request.url);
@@ -46,12 +49,18 @@ export default {
       return handleActivate(request, env);
     }
 
-    if (url.pathname === "/v1/license/deactivate" && request.method === "POST") {
+    if (
+      url.pathname === "/v1/license/deactivate" &&
+      request.method === "POST"
+    ) {
       return handleDeactivate(request, env);
     }
 
     if (url.pathname === "/health") {
-      return jsonResponse({ status: "ok", timestamp: new Date().toISOString() });
+      return jsonResponse({
+        status: "ok",
+        timestamp: new Date().toISOString(),
+      });
     }
 
     return jsonResponse({ error: "Not found" }, 404);
@@ -68,53 +77,53 @@ async function handleVerify(request, env) {
   try {
     body = await request.json();
   } catch {
-    return jsonResponse({ valid: false, reason: "invalid_request" }, 400);
+    return jsonResponse({ reason: "invalid_request", valid: false }, 400);
   }
 
   const { key, machine_id } = body;
 
   if (!key || typeof key !== "string") {
-    return jsonResponse({ valid: false, reason: "missing_key" }, 400);
+    return jsonResponse({ reason: "missing_key", valid: false }, 400);
   }
 
   if (!machine_id || typeof machine_id !== "string") {
-    return jsonResponse({ valid: false, reason: "missing_machine_id" }, 400);
+    return jsonResponse({ reason: "missing_machine_id", valid: false }, 400);
   }
 
   // Validate key format
   if (!validateKeyFormat(key)) {
-    return jsonResponse({ valid: false, reason: "invalid_format" });
+    return jsonResponse({ reason: "invalid_format", valid: false });
   }
 
   // Look up license in KV
   const licenseData = await env.LICENSES.get(key, { type: "json" });
 
   if (!licenseData) {
-    return jsonResponse({ valid: false, reason: "not_found" });
+    return jsonResponse({ reason: "not_found", valid: false });
   }
 
   if (licenseData.revoked) {
-    return jsonResponse({ valid: false, reason: "revoked" });
+    return jsonResponse({ reason: "revoked", valid: false });
   }
 
   // Check expiration
   if (licenseData.expires) {
     const expiresDate = new Date(licenseData.expires);
     if (expiresDate < new Date()) {
-      return jsonResponse({ valid: false, reason: "expired" });
+      return jsonResponse({ reason: "expired", valid: false });
     }
   }
 
   // Check machine limit
-  const maxMachines = parseInt(env.MAX_MACHINES_PER_LICENSE || "3", 10);
+  const maxMachines = Number.parseInt(env.MAX_MACHINES_PER_LICENSE || "3", 10);
   const machines = licenseData.machines || [];
 
   if (!machines.includes(machine_id)) {
     if (machines.length >= maxMachines) {
       return jsonResponse({
-        valid: false,
-        reason: "device_limit",
         max_devices: maxMachines,
+        reason: "device_limit",
+        valid: false,
       });
     }
 
@@ -125,10 +134,10 @@ async function handleVerify(request, env) {
   }
 
   return jsonResponse({
-    valid: true,
-    tier: licenseData.tier || "pro",
     expires: licenseData.expires || null,
     features: PRO_FEATURES,
+    tier: licenseData.tier || "pro",
+    valid: true,
   });
 }
 
@@ -142,45 +151,45 @@ async function handleActivate(request, env) {
   try {
     body = await request.json();
   } catch {
-    return jsonResponse({ success: false, reason: "invalid_request" }, 400);
+    return jsonResponse({ reason: "invalid_request", success: false }, 400);
   }
 
   const { key, machine_id } = body;
 
-  if (!key || !machine_id) {
-    return jsonResponse({ success: false, reason: "missing_fields" }, 400);
+  if (!(key && machine_id)) {
+    return jsonResponse({ reason: "missing_fields", success: false }, 400);
   }
 
   if (!validateKeyFormat(key)) {
-    return jsonResponse({ success: false, reason: "invalid_format" }, 400);
+    return jsonResponse({ reason: "invalid_format", success: false }, 400);
   }
 
   const licenseData = await env.LICENSES.get(key, { type: "json" });
 
   if (!licenseData) {
-    return jsonResponse({ success: false, reason: "not_found" });
+    return jsonResponse({ reason: "not_found", success: false });
   }
 
   if (licenseData.revoked) {
-    return jsonResponse({ success: false, reason: "revoked" });
+    return jsonResponse({ reason: "revoked", success: false });
   }
 
   if (licenseData.expires) {
     const expiresDate = new Date(licenseData.expires);
     if (expiresDate < new Date()) {
-      return jsonResponse({ success: false, reason: "expired" });
+      return jsonResponse({ reason: "expired", success: false });
     }
   }
 
-  const maxMachines = parseInt(env.MAX_MACHINES_PER_LICENSE || "3", 10);
+  const maxMachines = Number.parseInt(env.MAX_MACHINES_PER_LICENSE || "3", 10);
   const machines = licenseData.machines || [];
 
   if (!machines.includes(machine_id)) {
     if (machines.length >= maxMachines) {
       return jsonResponse({
-        success: false,
-        reason: "device_limit",
         max_devices: maxMachines,
+        reason: "device_limit",
+        success: false,
       });
     }
     machines.push(machine_id);
@@ -189,12 +198,12 @@ async function handleActivate(request, env) {
   }
 
   return jsonResponse({
-    success: true,
-    tier: licenseData.tier || "pro",
     expires: licenseData.expires || null,
     features: PRO_FEATURES,
-    machines_used: machines.length,
     machines_max: maxMachines,
+    machines_used: machines.length,
+    success: true,
+    tier: licenseData.tier || "pro",
   });
 }
 
@@ -208,19 +217,19 @@ async function handleDeactivate(request, env) {
   try {
     body = await request.json();
   } catch {
-    return jsonResponse({ success: false, reason: "invalid_request" }, 400);
+    return jsonResponse({ reason: "invalid_request", success: false }, 400);
   }
 
   const { key, machine_id } = body;
 
-  if (!key || !machine_id) {
-    return jsonResponse({ success: false, reason: "missing_fields" }, 400);
+  if (!(key && machine_id)) {
+    return jsonResponse({ reason: "missing_fields", success: false }, 400);
   }
 
   const licenseData = await env.LICENSES.get(key, { type: "json" });
 
   if (!licenseData) {
-    return jsonResponse({ success: false, reason: "not_found" });
+    return jsonResponse({ reason: "not_found", success: false });
   }
 
   const machines = licenseData.machines || [];
@@ -233,8 +242,8 @@ async function handleDeactivate(request, env) {
   }
 
   return jsonResponse({
-    success: true,
     machines_used: machines.length,
+    success: true,
   });
 }
 
@@ -242,10 +251,11 @@ async function handleDeactivate(request, env) {
  * Validate license key format: CS-PRO-XXXX-XXXX-XXXX-XXXX (hex chars)
  */
 function validateKeyFormat(key) {
-  if (typeof key !== "string") return false;
+  if (typeof key !== "string") {
+    return false;
+  }
   const trimmed = key.trim();
-  const pattern = /^CS-PRO-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$/;
-  return pattern.test(trimmed);
+  return LICENSE_KEY_PATTERN.test(trimmed);
 }
 
 /**
@@ -253,10 +263,10 @@ function validateKeyFormat(key) {
  */
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
-    status,
     headers: {
       "Content-Type": "application/json",
       ...CORS_HEADERS,
     },
+    status,
   });
 }

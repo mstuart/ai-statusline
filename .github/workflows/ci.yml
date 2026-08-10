@@ -10,6 +10,25 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  ultracite:
+    name: Ultracite (${{ matrix.package-directory }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package-directory: [npm, server]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install Node.js dependencies
+        working-directory: ${{ matrix.package-directory }}
+        run: npm install --ignore-scripts
+      - name: Ultracite check
+        working-directory: ${{ matrix.package-directory }}
+        run: npm run check
+
   check:
     name: Check (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
