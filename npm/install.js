@@ -1,55 +1,70 @@
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const https = require("node:https");
+const http = require("node:http");
+const fs = require("node:fs");
+const path = require("node:path");
 
-const REPO = 'mstuart/claude-status';
-const BIN_DIR = path.join(__dirname, 'bin');
-const BINARY_NAME = process.platform === 'win32' ? 'claude-status-bin.exe' : 'claude-status-bin';
+const REPO = "mstuart/claude-status";
+const BIN_DIR = path.join(import.meta.dirname, "bin");
+const BINARY_NAME =
+  process.platform === "win32" ? "claude-status-bin.exe" : "claude-status-bin";
 const BIN_PATH = path.join(BIN_DIR, BINARY_NAME);
 
 function getPlatform() {
-  const platform = process.platform;
+  const { platform } = process;
   switch (platform) {
-    case 'darwin': return 'darwin';
-    case 'linux': return 'linux';
-    case 'win32': return 'windows';
+    case "darwin":
+      return "darwin";
+    case "linux":
+      return "linux";
+    case "win32":
+      return "windows";
     default:
       throw new Error(`Unsupported platform: ${platform}`);
   }
 }
 
 function getArch() {
-  const arch = process.arch;
+  const { arch } = process;
   switch (arch) {
-    case 'x64': return 'x64';
-    case 'arm64': return 'arm64';
+    case "x64":
+      return "x64";
+    case "arm64":
+      return "arm64";
     default:
       throw new Error(`Unsupported architecture: ${arch}`);
   }
 }
 
 function getBinaryName(platform, arch) {
-  const ext = platform === 'windows' ? '.exe' : '';
+  const ext = platform === "windows" ? ".exe" : "";
   return `claude-status-${platform}-${arch}${ext}`;
 }
 
 function fetch(url) {
   return new Promise((resolve, reject) => {
-    const client = url.startsWith('https') ? https : http;
-    client.get(url, { headers: { 'User-Agent': 'claude-status-npm-install' } }, (res) => {
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return fetch(res.headers.location).then(resolve, reject);
-      }
-      if (res.statusCode !== 200) {
-        return reject(new Error(`HTTP ${res.statusCode}: ${url}`));
-      }
-      const chunks = [];
-      res.on('data', (chunk) => chunks.push(chunk));
-      res.on('end', () => resolve(Buffer.concat(chunks)));
-      res.on('error', reject);
-    }).on('error', reject);
+    const client = url.startsWith("https") ? https : http;
+    client
+      .get(
+        url,
+        { headers: { "User-Agent": "claude-status-npm-install" } },
+        (res) => {
+          if (
+            res.statusCode >= 300 &&
+            res.statusCode < 400 &&
+            res.headers.location
+          ) {
+            return fetch(res.headers.location).then(resolve, reject);
+          }
+          if (res.statusCode !== 200) {
+            return reject(new Error(`HTTP ${res.statusCode}: ${url}`));
+          }
+          const chunks = [];
+          res.on("data", (chunk) => chunks.push(chunk));
+          res.on("end", () => resolve(Buffer.concat(chunks)));
+          res.on("error", reject);
+        }
+      )
+      .on("error", reject);
   });
 }
 
@@ -69,7 +84,7 @@ async function install() {
   const data = await fetch(url);
   fs.writeFileSync(BIN_PATH, data);
 
-  if (process.platform !== 'win32') {
+  if (process.platform !== "win32") {
     fs.chmodSync(BIN_PATH, 0o755);
   }
 
@@ -77,13 +92,15 @@ async function install() {
 }
 
 install().catch((err) => {
-  console.error('Failed to download claude-status binary.');
+  console.error("Failed to download claude-status binary.");
   console.error(err.message);
-  console.error('');
-  console.error('You can install manually:');
-  console.error(`  1. Download the binary from https://github.com/${REPO}/releases/latest`);
+  console.error("");
+  console.error("You can install manually:");
+  console.error(
+    `  1. Download the binary from https://github.com/${REPO}/releases/latest`
+  );
   console.error(`  2. Save it to ${BIN_PATH}`);
-  if (process.platform !== 'win32') {
+  if (process.platform !== "win32") {
     console.error(`  3. Run: chmod +x ${BIN_PATH}`);
   }
   process.exit(1);
