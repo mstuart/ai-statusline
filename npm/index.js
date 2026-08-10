@@ -1,6 +1,6 @@
-const path = require('path');
+const path = require("node:path");
 
-const ext = process.platform === 'win32' ? '.exe' : '';
+const ext = process.platform === "win32" ? ".exe" : "";
 module.exports = {
-  binaryPath: path.join(__dirname, 'bin', `claude-status-bin${ext}`)
+  binaryPath: path.join(import.meta.dirname, "bin", `claude-status-bin${ext}`),
 };
