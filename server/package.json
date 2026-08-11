@@ -1,8 +1,8 @@
 {
-  "name": "claude-status-license-server",
+  "name": "ai-statusline-license-server",
   "version": "1.0.0",
   "private": true,
-  "description": "License validation server for claude-status Pro",
+  "description": "License validation server for ai-statusline Pro",
   "scripts": {
     "check": "ultracite check",
     "deploy": "wrangler deploy",

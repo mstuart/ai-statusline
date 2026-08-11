@@ -1,3 +1,6 @@
 /target
 npm/node_modules/
 npm/bin/claude-status-bin
+npm/*.tgz
+server/node_modules/
+server/package-lock.json

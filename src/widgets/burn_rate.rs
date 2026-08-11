@@ -108,15 +108,15 @@ impl Widget for BurnRateWidget {
         };
 
         let text = if config.raw_value {
-            format!("{:.2}", rate)
+            format!("{rate:.2}")
         } else if rate < 0.01 {
             "Burn: idle".into()
         } else if hours_left.is_infinite() || hours_left > 168.0 {
-            format!("Burn: ${:.2}/hr", rate)
+            format!("Burn: ${rate:.2}/hr")
         } else {
             let hours = hours_left as u64;
             let mins = ((hours_left - hours as f64) * 60.0) as u64;
-            format!("Burn: ${:.2}/hr -> limit in {}h {}m", rate, hours, mins)
+            format!("Burn: ${rate:.2}/hr -> limit in {hours}h {mins}m")
         };
 
         let display_width = text.len();

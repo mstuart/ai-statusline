@@ -9,8 +9,8 @@ use super::traits::{Widget, WidgetConfig, WidgetOutput};
 pub struct GitStatusWidget;
 
 fn cache_path(prefix: &str, dir: &str) -> PathBuf {
-    let hash: String = dir.bytes().take(8).map(|b| format!("{:02x}", b)).collect();
-    PathBuf::from(format!("/tmp/claude-status-{prefix}-{hash}"))
+    let hash: String = dir.bytes().take(8).map(|b| format!("{b:02x}")).collect();
+    PathBuf::from(format!("/tmp/ai-statusline-{prefix}-{hash}"))
 }
 
 fn read_cache(path: &PathBuf, max_age_secs: u64) -> Option<String> {

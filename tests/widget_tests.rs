@@ -807,7 +807,7 @@ fn all_widgets_with_empty_session_no_panic() {
 
     for name in &widget_names {
         let result = registry.render(name, &data, &config);
-        assert!(result.is_some(), "Widget '{}' should be registered", name);
+        assert!(result.is_some(), "Widget '{name}' should be registered");
     }
 }
 

@@ -92,7 +92,7 @@ impl Widget for GitWorktreeWidget {
         // If common dir differs from the toplevel's .git, this is a worktree
         let is_worktree = common_resolved != toplevel_git_resolved
             && git_common_dir != ".git"
-            && git_common_dir != format!("{}/.git", toplevel);
+            && git_common_dir != format!("{toplevel}/.git");
 
         if !is_worktree {
             return WidgetOutput {

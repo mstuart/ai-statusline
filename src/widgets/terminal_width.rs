@@ -12,9 +12,9 @@ impl Widget for TerminalWidthWidget {
         let cols = crossterm::terminal::size().map(|(w, _)| w).unwrap_or(80);
 
         let text = if config.raw_value {
-            format!("{}", cols)
+            format!("{cols}")
         } else {
-            format!("{} cols", cols)
+            format!("{cols} cols")
         };
 
         let display_width = text.len();

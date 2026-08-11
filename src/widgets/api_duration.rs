@@ -49,12 +49,12 @@ impl Widget for ApiDurationWidget {
         };
 
         let pct = (api_ms as f64 / total_ms as f64 * 100.0) as u64;
-        let pct_str = format!("{}%", pct);
+        let pct_str = format!("{pct}%");
 
         let text = if config.raw_value {
             pct_str
         } else {
-            format!("API: {}", pct_str)
+            format!("API: {pct_str}")
         };
 
         let display_width = text.len();
