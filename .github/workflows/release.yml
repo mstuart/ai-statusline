@@ -19,30 +19,30 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            binary: claude-status-linux-x64
+            archive: ai-statusline-${{ github.ref_name }}-x86_64-unknown-linux-gnu.tar.gz
             use_cross: false
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
-            binary: claude-status-linux-arm64
+            archive: ai-statusline-${{ github.ref_name }}-aarch64-unknown-linux-gnu.tar.gz
             use_cross: true
           - target: x86_64-apple-darwin
             os: macos-latest
-            binary: claude-status-darwin-x64
+            archive: ai-statusline-${{ github.ref_name }}-x86_64-apple-darwin.tar.gz
             use_cross: false
           - target: aarch64-apple-darwin
             os: macos-latest
-            binary: claude-status-darwin-arm64
+            archive: ai-statusline-${{ github.ref_name }}-aarch64-apple-darwin.tar.gz
             use_cross: false
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            binary: claude-status-windows-x64.exe
+            archive: ai-statusline-${{ github.ref_name }}-x86_64-pc-windows-msvc.zip
             use_cross: false
 
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Rust 1.88.0
+        uses: dtolnay/rust-toolchain@1.88.0
         with:
           targets: ${{ matrix.target }}
 
@@ -60,21 +60,28 @@ jobs:
 
       - name: Strip binary (Linux/macOS)
         if: runner.os != 'Windows'
-        run: strip target/${{ matrix.target }}/release/claude-status || true
+        run: strip target/${{ matrix.target }}/release/ai-statusline || true
 
-      - name: Rename binary (Linux/macOS)
+      - name: Package archive (Linux/macOS)
         if: runner.os != 'Windows'
-        run: cp target/${{ matrix.target }}/release/claude-status ${{ matrix.binary }}
+        run: |
+          mkdir -p dist
+          cp target/${{ matrix.target }}/release/ai-statusline dist/ai-statusline-bin
+          tar -C dist -czf ${{ matrix.archive }} ai-statusline-bin
 
-      - name: Rename binary (Windows)
+      - name: Package archive (Windows)
         if: runner.os == 'Windows'
-        run: cp target/${{ matrix.target }}/release/claude-status.exe ${{ matrix.binary }}
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path dist -Force
+          Copy-Item target/${{ matrix.target }}/release/ai-statusline.exe dist/ai-statusline-bin.exe
+          Compress-Archive -Path dist/ai-statusline-bin.exe -DestinationPath ${{ matrix.archive }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.binary }}
-          path: ${{ matrix.binary }}
+          name: ${{ matrix.archive }}
+          path: ${{ matrix.archive }}
 
   release:
     name: Create Release

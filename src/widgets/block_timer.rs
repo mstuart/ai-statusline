@@ -10,9 +10,9 @@ fn format_hm(ms: u64) -> String {
     let hours = total_mins / 60;
     let mins = total_mins % 60;
     if hours > 0 {
-        format!("{}h{}m", hours, mins)
+        format!("{hours}h{mins}m")
     } else {
-        format!("{}m", mins)
+        format!("{mins}m")
     }
 }
 
@@ -74,7 +74,7 @@ impl Widget for BlockTimerWidget {
                 remaining_str
             )
         } else {
-            format!("Block: {} left", remaining_str)
+            format!("Block: {remaining_str} left")
         };
 
         let display_width = text.len();

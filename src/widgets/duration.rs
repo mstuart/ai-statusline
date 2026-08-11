@@ -11,14 +11,14 @@ fn format_duration(ms: u64, compact: bool) -> String {
 
     if compact {
         if hours > 0 {
-            format!("{}h{}m", hours, mins)
+            format!("{hours}h{mins}m")
         } else {
-            format!("{}m{}s", mins, secs)
+            format!("{mins}m{secs}s")
         }
     } else if hours > 0 {
-        format!("{}h {}m", hours, mins)
+        format!("{hours}h {mins}m")
     } else {
-        format!("{}m {}s", mins, secs)
+        format!("{mins}m {secs}s")
     }
 }
 

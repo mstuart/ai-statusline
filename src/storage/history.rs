@@ -54,11 +54,17 @@ impl CostTracker {
     }
 
     fn db_path() -> PathBuf {
-        dirs::data_dir()
+        let base_dir = dirs::data_dir()
             .or_else(dirs::config_dir)
-            .unwrap_or_else(|| PathBuf::from("."))
-            .join("claude-status")
-            .join("history.db")
+            .unwrap_or_else(|| PathBuf::from("."));
+        let current = base_dir.join("ai-statusline").join("history.db");
+        let legacy = base_dir.join("claude-status").join("history.db");
+
+        if current.exists() || !legacy.exists() {
+            current
+        } else {
+            legacy
+        }
     }
 
     fn init_schema(&self) -> SqlResult<()> {
@@ -312,7 +318,7 @@ mod tests {
         for i in 0..5 {
             tracker
                 .upsert_session(&SessionRecord {
-                    id: format!("s{}", i),
+                    id: format!("s{i}"),
                     start_time: 1000 + i * 100,
                     end_time: None,
                     model: "claude-sonnet-4-5-20250929".into(),

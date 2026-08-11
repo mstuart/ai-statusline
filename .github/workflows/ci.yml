@@ -40,8 +40,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Rust 1.88.0
+        uses: dtolnay/rust-toolchain@1.88.0
         with:
           components: clippy, rustfmt
 
@@ -67,3 +67,22 @@ jobs:
 
       - name: cargo fmt
         run: cargo fmt --all -- --check
+
+  npm-pack-smoke:
+    name: npm packed install smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install Rust 1.88.0
+        uses: dtolnay/rust-toolchain@1.88.0
+      - name: Build release binary
+        run: cargo build --release
+      - name: Install Node.js dependencies
+        working-directory: npm
+        run: npm install --ignore-scripts
+      - name: Packed npm install smoke
+        working-directory: npm
+        run: npm run test:pack

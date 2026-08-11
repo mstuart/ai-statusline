@@ -4,7 +4,8 @@ use std::path::PathBuf;
 
 use super::verify::ValidationCache;
 
-const LICENSE_DIR: &str = "claude-status";
+const LICENSE_DIR: &str = "ai-statusline";
+const LEGACY_LICENSE_DIR: &str = "claude-status";
 const LICENSE_FILE: &str = "license.key";
 const CACHE_FILE: &str = "license-cache.json";
 
@@ -24,9 +25,15 @@ impl LicenseStorage {
     }
 
     fn default_dir() -> PathBuf {
-        dirs::config_dir()
-            .unwrap_or_else(|| PathBuf::from(".config"))
-            .join(LICENSE_DIR)
+        let config_dir = dirs::config_dir().unwrap_or_else(|| PathBuf::from(".config"));
+        let current = config_dir.join(LICENSE_DIR);
+        let legacy = config_dir.join(LEGACY_LICENSE_DIR);
+
+        if current.exists() || !legacy.exists() {
+            current
+        } else {
+            legacy
+        }
     }
 
     fn ensure_dir(&self) -> io::Result<()> {
@@ -108,7 +115,7 @@ mod tests {
 
     #[test]
     fn test_save_and_load_key() {
-        let dir = std::env::temp_dir().join(format!("claude-status-test-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("ai-statusline-test-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         let storage = LicenseStorage::with_dir(dir.clone());
 
@@ -123,7 +130,7 @@ mod tests {
     #[test]
     fn test_load_key_missing() {
         let dir =
-            std::env::temp_dir().join(format!("claude-status-test-missing-{}", std::process::id()));
+            std::env::temp_dir().join(format!("ai-statusline-test-missing-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         let storage = LicenseStorage::with_dir(dir.clone());
 
@@ -134,7 +141,7 @@ mod tests {
     #[test]
     fn test_remove_key() {
         let dir =
-            std::env::temp_dir().join(format!("claude-status-test-rm-{}", std::process::id()));
+            std::env::temp_dir().join(format!("ai-statusline-test-rm-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         let storage = LicenseStorage::with_dir(dir.clone());
 
@@ -150,7 +157,7 @@ mod tests {
     #[test]
     fn test_save_and_load_cache() {
         let dir =
-            std::env::temp_dir().join(format!("claude-status-test-cache-{}", std::process::id()));
+            std::env::temp_dir().join(format!("ai-statusline-test-cache-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         let storage = LicenseStorage::with_dir(dir.clone());
 
@@ -174,7 +181,7 @@ mod tests {
     #[test]
     fn test_remove_cache() {
         let dir = std::env::temp_dir().join(format!(
-            "claude-status-test-rm-cache-{}",
+            "ai-statusline-test-rm-cache-{}",
             std::process::id()
         ));
         let _ = fs::remove_dir_all(&dir);
