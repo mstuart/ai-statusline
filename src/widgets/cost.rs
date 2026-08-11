@@ -35,7 +35,7 @@ impl Widget for SessionCostWidget {
             }
         };
 
-        let cost_str = format!("${:.2}", total_usd);
+        let cost_str = format!("${total_usd:.2}");
 
         let text = if config.raw_value {
             cost_str
@@ -49,7 +49,7 @@ impl Widget for SessionCostWidget {
                 if duration_ms > 0 {
                     let hours = duration_ms as f64 / 3_600_000.0;
                     let rate = total_usd / hours;
-                    format!("{} (${:.2}/hr)", cost_str, rate)
+                    format!("{cost_str} (${rate:.2}/hr)")
                 } else {
                     cost_str
                 }

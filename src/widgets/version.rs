@@ -25,7 +25,7 @@ impl Widget for VersionWidget {
         let text = if ver.starts_with('v') {
             ver.clone()
         } else {
-            format!("v{}", ver)
+            format!("v{ver}")
         };
 
         let display_width = text.len();

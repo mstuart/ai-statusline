@@ -158,9 +158,9 @@ impl Widget for ModelSuggestWidget {
         };
 
         let text = if config.raw_value {
-            format!("{}:{:.2}", suggested_model, savings)
+            format!("{suggested_model}:{savings:.2}")
         } else {
-            format!("\u{1F4A1} Try {} -> Save ${:.2}", suggested_model, savings)
+            format!("\u{1F4A1} Try {suggested_model} -> Save ${savings:.2}")
         };
 
         let display_width = text.len();

@@ -87,7 +87,7 @@ pub fn handle_command(cmd: Commands) {
 fn config_path() -> std::path::PathBuf {
     dirs::config_dir()
         .unwrap_or_else(|| std::path::PathBuf::from(".config"))
-        .join("claude-status")
+        .join("ai-statusline")
         .join("config.toml")
 }
 
@@ -116,13 +116,13 @@ fn cmd_init() {
     println!();
     println!(r#"  "preferences": {{"#);
     println!(r#"    "statusline": {{"#);
-    println!(r#"      "command": "claude-status""#);
+    println!(r#"      "command": "ai-statusline""#);
     println!(r#"    }}"#);
     println!(r#"  }}"#);
 }
 
 fn cmd_doctor() {
-    println!("claude-status doctor");
+    println!("ai-statusline doctor");
     println!("=================");
     println!();
 
@@ -186,7 +186,7 @@ fn cmd_doctor() {
         }
     } else {
         println!(
-            "  - Config: not found at {} (run `claude-status init` to create)",
+            "  - Config: not found at {} (run `ai-statusline init` to create)",
             cfg_path.display()
         );
     }
@@ -196,7 +196,7 @@ fn cmd_doctor() {
     if pro {
         print_check(true, "License: Pro (active)");
     } else {
-        println!("  - License: Free (run `claude-status license activate <key>` to upgrade)");
+        println!("  - License: Free (run `ai-statusline license activate <key>` to upgrade)");
     }
 
     println!();
@@ -410,7 +410,7 @@ fn cmd_license_deactivate() {
 fn cmd_license_status() {
     match ai_statusline::license::check_pro() {
         Some(info) => {
-            println!("claude-status Pro");
+            println!("ai-statusline Pro");
             println!("=================");
             println!();
             println!("  Status:   {:?}", info.status);
@@ -436,7 +436,7 @@ fn cmd_license_status() {
             if let Some(key) = storage.load_key() {
                 let validator = ai_statusline::license::LicenseValidator::new();
                 let info = validator.validate(&key);
-                println!("claude-status Free (license issue)");
+                println!("ai-statusline Free (license issue)");
                 println!("==================================");
                 println!();
                 println!("  Status:  {:?}", info.status);
@@ -447,9 +447,9 @@ fn cmd_license_status() {
                 );
                 println!();
                 println!("Your license key could not be validated.");
-                println!("Run `claude-status license activate <key>` with a valid key.");
+                println!("Run `ai-statusline license activate <key>` with a valid key.");
             } else {
-                println!("claude-status Free");
+                println!("ai-statusline Free");
                 println!("==================");
                 println!();
                 println!("No Pro license is active.");
@@ -457,8 +457,8 @@ fn cmd_license_status() {
                 println!("Upgrade to Pro for cost tracking, burn rate analysis,");
                 println!("model routing suggestions, and more.");
                 println!();
-                println!("  Activate: claude-status license activate <key>");
-                println!("  Purchase: https://claude-status.dev/pro");
+                println!("  Activate: ai-statusline license activate <key>");
+                println!("  Purchase: https://ai-statusline.dev/pro");
             }
         }
     }
@@ -466,13 +466,13 @@ fn cmd_license_status() {
 
 fn cmd_stats(period: &str) {
     if !ai_statusline::license::is_pro() {
-        println!("claude-status Stats (Pro feature)");
+        println!("ai-statusline Stats (Pro feature)");
         println!("=================================");
         println!();
         println!("Historical stats require a Pro license.");
         println!();
-        println!("  Activate: claude-status license activate <key>");
-        println!("  Purchase: https://claude-status.dev/pro");
+        println!("  Activate: ai-statusline license activate <key>");
+        println!("  Purchase: https://ai-statusline.dev/pro");
         return;
     }
 
@@ -503,7 +503,7 @@ fn cmd_stats(period: &str) {
         .timestamp();
     let now_ts = now.timestamp();
 
-    println!("claude-status Stats");
+    println!("ai-statusline Stats");
     println!("===================");
     println!();
 
@@ -513,32 +513,26 @@ fn cmd_stats(period: &str) {
     let daily_change = if yesterday_cost > 0.0 {
         let pct = ((today_cost - yesterday_cost) / yesterday_cost) * 100.0;
         if pct >= 0.0 {
-            format!(" (+{:.0}% vs yesterday)", pct)
+            format!(" (+{pct:.0}% vs yesterday)")
         } else {
-            format!(" ({:.0}% vs yesterday)", pct)
+            format!(" ({pct:.0}% vs yesterday)")
         }
     } else {
         String::new()
     };
-    println!("  Daily:   ${:.2}{}", today_cost, daily_change);
+    println!("  Daily:   ${today_cost:.2}{daily_change}");
 
     // Weekly
     let weekly_cost = tracker.session_cost_range(week_start, now_ts);
     let weekly_limit = 200.0;
     let weekly_pct = (weekly_cost / weekly_limit) * 100.0;
-    println!(
-        "  Weekly:  ${:.2} ({:.0}% of ${:.0} limit)",
-        weekly_cost, weekly_pct, weekly_limit
-    );
+    println!("  Weekly:  ${weekly_cost:.2} ({weekly_pct:.0}% of ${weekly_limit:.0} limit)");
 
     // Monthly
     let monthly_cost = tracker.session_cost_range(month_start, now_ts);
     let days_elapsed = ((now_ts - month_start) as f64 / 86400.0).max(1.0);
     let avg_daily = monthly_cost / days_elapsed;
-    println!(
-        "  Monthly: ${:.2} (avg ${:.2}/day)",
-        monthly_cost, avg_daily
-    );
+    println!("  Monthly: ${monthly_cost:.2} (avg ${avg_daily:.2}/day)");
 
     // Top sessions
     let range_start = match period {

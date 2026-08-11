@@ -1,8 +1,8 @@
 <div align="center">
-  <img src="docs/assets/logo.svg" alt="ai-statusline — Customizable status line for AI coding assistants - real-time display of model, tokens, cost, git status, and more" width="720">
+  <img src="docs/assets/logo.svg" alt="ai-statusline — Customizable status line for Claude Code - real-time display of model, tokens, cost, git status, and more" width="720">
 </div>
 
-<p align="center"><strong>Customizable status line for AI coding assistants - real-time display of model, tokens, cost, git status, and more</strong></p>
+<p align="center"><strong>Customizable status line for Claude Code - real-time display of model, tokens, cost, git status, and more</strong></p>
 
 <p align="center">
   <a href="https://github.com/mstuart/ai-statusline/actions/workflows/ci.yml"><img src="https://github.com/mstuart/ai-statusline/actions/workflows/ci.yml/badge.svg" alt="CI"></a>

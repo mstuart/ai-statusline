@@ -377,7 +377,7 @@ fn draw_tabs(f: &mut ratatui::Frame, state: &TuiState, area: Rect) {
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title("claude-status config"),
+                .title("ai-statusline config"),
         )
         .select(state.active_tab.index())
         .style(Style::default().fg(Color::White))
@@ -491,8 +491,7 @@ fn draw_layout_panel(f: &mut ratatui::Frame, state: &TuiState, area: Rect) {
 fn draw_status_bar(f: &mut ratatui::Frame, state: &TuiState, area: Rect) {
     let modified = if state.modified { " [modified]" } else { "" };
     let help = format!(
-        " Tab/Shift-Tab: switch tabs | arrows: navigate | Enter: select | q: quit | Ctrl-s: save{}",
-        modified
+        " Tab/Shift-Tab: switch tabs | arrows: navigate | Enter: select | q: quit | Ctrl-s: save{modified}"
     );
     let bar = Paragraph::new(Line::from(Span::styled(
         help,
@@ -505,7 +504,7 @@ fn save_config(config: &Config) {
     let path = Config::default_path().unwrap_or_else(|| {
         dirs::config_dir()
             .unwrap_or_else(|| std::path::PathBuf::from(".config"))
-            .join("claude-status")
+            .join("ai-statusline")
             .join("config.toml")
     });
 

@@ -1,5 +1,5 @@
 /**
- * claude-status License Server
+ * ai-statusline License Server
  * Cloudflare Worker for Pro license validation
  *
  * KV Schema (LICENSES namespace):

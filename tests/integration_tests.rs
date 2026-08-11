@@ -296,8 +296,7 @@ fn widget_registry_has_all_expected_widgets() {
     for name in &expected {
         assert!(
             registry.render(name, &data, &config).is_some(),
-            "Widget '{}' should be registered in the registry",
-            name
+            "Widget '{name}' should be registered in the registry"
         );
     }
 }
@@ -349,9 +348,7 @@ fn all_themes_have_required_color_roles() {
         for role in &roles {
             assert!(
                 theme.color(role).is_some(),
-                "Theme '{}' missing color role '{}'",
-                name,
-                role
+                "Theme '{name}' missing color role '{role}'"
             );
         }
     }

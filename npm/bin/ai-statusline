@@ -2,8 +2,24 @@
 # Wrapper script for ai-statusline binary
 # The actual binary is downloaded during npm postinstall
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SELF="$0"
+while [ -L "$SELF" ]; do
+  LINK="$(readlink "$SELF")"
+  case "$LINK" in
+    /*) SELF="$LINK" ;;
+    *) SELF="$(dirname "$SELF")/$LINK" ;;
+  esac
+done
+
+SCRIPT_DIR="$(cd "$(dirname "$SELF")" && pwd)"
 BINARY="$SCRIPT_DIR/ai-statusline-bin"
+
+if [ -f "$BINARY" ]; then
+  exec "$BINARY" "$@"
+fi
+
+# npm runs bin entries through node_modules/.bin symlinks.
+BINARY="$SCRIPT_DIR/../ai-statusline/bin/ai-statusline-bin"
 
 if [ -f "$BINARY" ]; then
   exec "$BINARY" "$@"
@@ -11,7 +27,15 @@ fi
 
 # Check for binary with platform-specific name
 case "$(uname -s)" in
-  MINGW*|MSYS*|CYGWIN*) BINARY="$SCRIPT_DIR/ai-statusline.exe" ;;
+  MINGW*|MSYS*|CYGWIN*) BINARY="$SCRIPT_DIR/ai-statusline-bin.exe" ;;
+esac
+
+if [ -f "$BINARY" ]; then
+  exec "$BINARY" "$@"
+fi
+
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) BINARY="$SCRIPT_DIR/../ai-statusline/bin/ai-statusline-bin.exe" ;;
 esac
 
 if [ -f "$BINARY" ]; then

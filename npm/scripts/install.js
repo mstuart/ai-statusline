@@ -1,16 +1,23 @@
 #!/usr/bin/env node
 
-const { execSync } = require("node:child_process");
-const fs = require("node:fs");
-const http = require("node:http");
-const https = require("node:https");
-const os = require("node:os");
-const path = require("node:path");
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+import http from "node:http";
+import https from "node:https";
+import os from "node:os";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const PACKAGE = require("../package.json");
+const PACKAGE = JSON.parse(
+  fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")
+);
 const VERSION = PACKAGE.version;
 const REPO = "mstuart/ai-statusline";
-const BINARY_NAME = "ai-statusline";
+const PACKAGE_NAME = "ai-statusline";
+const BINARY_BASENAME = "ai-statusline-bin";
+const DOWNLOAD_BASE_URL = process.env.AI_STATUSLINE_DOWNLOAD_BASE_URL;
+const TRAILING_SLASH_PATTERN = /\/$/;
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 function getPlatformTarget() {
   const platform = os.platform();
@@ -36,9 +43,19 @@ function getPlatformTarget() {
   return { arch, platform, target };
 }
 
+function getArchiveName(target) {
+  const extension = target.includes("windows") ? "zip" : "tar.gz";
+  return `${PACKAGE_NAME}-v${VERSION}-${target}.${extension}`;
+}
+
 function getDownloadUrl(target) {
-  const archive = target.includes("windows") ? "zip" : "tar.gz";
-  return `https://github.com/${REPO}/releases/download/v${VERSION}/${BINARY_NAME}-v${VERSION}-${target}.${archive}`;
+  const archiveName = getArchiveName(target);
+
+  if (DOWNLOAD_BASE_URL) {
+    return `${DOWNLOAD_BASE_URL.replace(TRAILING_SLASH_PATTERN, "")}/${archiveName}`;
+  }
+
+  return `https://github.com/${REPO}/releases/download/v${VERSION}/${archiveName}`;
 }
 
 function download(url) {
@@ -49,7 +66,7 @@ function download(url) {
         response.statusCode < 400 &&
         response.headers.location
       ) {
-        const redirectUrl = response.headers.location;
+        const redirectUrl = new URL(response.headers.location, url).toString();
         const client = redirectUrl.startsWith("https") ? https : http;
         client.get(redirectUrl, handler).on("error", reject);
         return;
@@ -70,7 +87,8 @@ function download(url) {
       response.on("error", reject);
     };
 
-    https.get(url, handler).on("error", reject);
+    const client = url.startsWith("https") ? https : http;
+    client.get(url, handler).on("error", reject);
   });
 }
 
@@ -79,7 +97,7 @@ function extractTarGz(buffer, destDir) {
   fs.writeFileSync(tmpFile, buffer);
 
   try {
-    execSync(`tar xzf "${tmpFile}" -C "${destDir}"`, { stdio: "pipe" });
+    execFileSync("tar", ["xzf", tmpFile, "-C", destDir], { stdio: "pipe" });
   } finally {
     try {
       fs.unlinkSync(tmpFile);
@@ -94,7 +112,7 @@ function extractZip(buffer, destDir) {
   fs.writeFileSync(tmpFile, buffer);
 
   try {
-    execSync(`unzip -o "${tmpFile}" -d "${destDir}"`, { stdio: "pipe" });
+    execFileSync("unzip", ["-o", tmpFile, "-d", destDir], { stdio: "pipe" });
   } finally {
     try {
       fs.unlinkSync(tmpFile);
@@ -106,13 +124,11 @@ function extractZip(buffer, destDir) {
 
 async function install() {
   const { target, platform } = getPlatformTarget();
-  const binDir = path.join(import.meta.dirname, "..", "bin");
-  const binPath = path.join(
-    binDir,
-    platform === "win32" ? `${BINARY_NAME}.exe` : BINARY_NAME
-  );
+  const binDir = path.join(SCRIPT_DIR, "..", "bin");
+  const binaryName =
+    platform === "win32" ? `${BINARY_BASENAME}.exe` : BINARY_BASENAME;
+  const binPath = path.join(binDir, binaryName);
 
-  // Check if binary already exists
   if (fs.existsSync(binPath)) {
     console.log(`ai-statusline binary already installed at ${binPath}`);
     return;
@@ -126,7 +142,6 @@ async function install() {
     const data = await download(url);
     console.log(`  Downloaded ${(data.length / 1024 / 1024).toFixed(1)} MB`);
 
-    // Extract
     fs.mkdirSync(binDir, { recursive: true });
 
     if (target.includes("windows")) {
@@ -135,7 +150,6 @@ async function install() {
       extractTarGz(data, binDir);
     }
 
-    // Make executable
     if (platform !== "win32") {
       fs.chmodSync(binPath, 0o755);
     }
@@ -148,11 +162,10 @@ async function install() {
     console.warn("\nOr download manually from:");
     console.warn(`  https://github.com/${REPO}/releases`);
 
-    // Create a stub script that tells the user to install manually
     const stub =
       platform === "win32"
         ? "@echo off\necho ai-statusline binary not installed. Run: cargo install --path . in the ai-statusline repo\nexit /b 1\n"
-        : `#!/bin/sh\necho "ai-statusline binary not installed. Run: cargo install --path . in the ai-statusline repo"\nexit 1\n`;
+        : '#!/bin/sh\necho "ai-statusline binary not installed. Run: cargo install --path . in the ai-statusline repo"\nexit 1\n';
 
     fs.mkdirSync(binDir, { recursive: true });
     fs.writeFileSync(binPath, stub);

@@ -1,4 +1,4 @@
-name = "claude-status-license"
+name = "ai-statusline-license"
 main = "src/worker.js"
 compatibility_date = "2025-12-01"
 
