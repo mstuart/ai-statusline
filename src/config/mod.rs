@@ -161,15 +161,29 @@ impl Config {
     }
 
     pub fn default_path() -> Option<PathBuf> {
+        const APP_DIR: &str = "ai-statusline";
+        const LEGACY_APP_DIR: &str = "claude-status";
+
         // Check CLAUDE_CONFIG_DIR first
         if let Ok(dir) = std::env::var("CLAUDE_CONFIG_DIR") {
-            let p = PathBuf::from(dir).join("claude-status").join("config.toml");
-            if p.exists() {
-                return Some(p);
+            let base = PathBuf::from(dir);
+            for app_dir in [APP_DIR, LEGACY_APP_DIR] {
+                let p = base.join(app_dir).join("config.toml");
+                if p.exists() {
+                    return Some(p);
+                }
             }
         }
         // XDG config
-        dirs::config_dir().map(|d| d.join("claude-status").join("config.toml"))
+        dirs::config_dir().map(|d| {
+            let current = d.join(APP_DIR).join("config.toml");
+            let legacy = d.join(LEGACY_APP_DIR).join("config.toml");
+            if current.exists() || !legacy.exists() {
+                current
+            } else {
+                legacy
+            }
+        })
     }
 
     pub fn to_toml(&self) -> String {

@@ -12,7 +12,7 @@ use ai_statusline::widgets::{SessionData, WidgetRegistry};
 
 #[derive(Parser)]
 #[command(
-    name = "claude-status",
+    name = "ai-statusline",
     version,
     about = "A high-performance status line for Claude Code"
 )]

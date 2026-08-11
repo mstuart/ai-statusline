@@ -10,9 +10,9 @@ fn cache_path(command: &str) -> std::path::PathBuf {
     let hash: String = command
         .bytes()
         .take(16)
-        .map(|b| format!("{:02x}", b))
+        .map(|b| format!("{b:02x}"))
         .collect();
-    std::path::PathBuf::from(format!("/tmp/claude-status-cmd-{hash}"))
+    std::path::PathBuf::from(format!("/tmp/ai-statusline-cmd-{hash}"))
 }
 
 fn read_cache(path: &std::path::Path) -> Option<String> {

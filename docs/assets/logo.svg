@@ -8,5 +8,5 @@
     </g>
   </g>
   <text x="299" y="103" fill="#e6edf3" font-size="48" font-weight="800" letter-spacing="-1">ai-statusline</text>
-  <text x="400" y="154" text-anchor="middle" fill="#8b949e" font-size="16" font-weight="500">Customizable status line for AI coding assistants - real-time display of mode…</text>
+  <text x="400" y="154" text-anchor="middle" fill="#8b949e" font-size="16" font-weight="500">Customizable Claude Code status line - real-time display of mode…</text>
 </svg>
