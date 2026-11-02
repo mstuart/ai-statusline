@@ -1,3 +1,4 @@
+use sha2::{Digest, Sha256};
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
@@ -9,7 +10,7 @@ use super::traits::{Widget, WidgetConfig, WidgetOutput};
 pub struct GitBranchWidget;
 
 fn cache_path(prefix: &str, dir: &str) -> PathBuf {
-    let hash: String = dir.bytes().take(8).map(|b| format!("{b:02x}")).collect();
+    let hash = hex::encode(Sha256::digest(dir.as_bytes()));
     PathBuf::from(format!("/tmp/ai-statusline-{prefix}-{hash}"))
 }
 
@@ -130,5 +131,22 @@ impl Widget for GitBranchWidget {
             visible: true,
             color_hint: None,
         }
+    }
+}
+
+#[cfg(test)]
+mod maintenance_tests {
+    use super::*;
+
+    #[test]
+    fn repositories_with_a_shared_path_prefix_have_distinct_caches() {
+        assert_ne!(
+            cache_path("git", "/Users/mark/repo-a"),
+            cache_path("git", "/Users/mark/repo-b")
+        );
+        assert_eq!(
+            cache_path("git", "/Users/mark/repo-a"),
+            cache_path("git", "/Users/mark/repo-a")
+        );
     }
 }

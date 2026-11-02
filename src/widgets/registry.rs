@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use unicode_width::UnicodeWidthStr;
 
 use super::data::SessionData;
 use super::traits::{Widget, WidgetConfig, WidgetOutput};
@@ -32,9 +33,14 @@ impl WidgetRegistry {
         data: &SessionData,
         config: &WidgetConfig,
     ) -> Option<WidgetOutput> {
-        self.widgets
-            .get(widget_type)
-            .map(|w| w.render(data, config))
+        self.widgets.get(widget_type).map(|w| {
+            let mut output = w.render(data, config);
+            if widget_type != "flex-separator" {
+                output.display_width =
+                    UnicodeWidthStr::width(crate::layout::strip_ansi(&output.text).as_str());
+            }
+            output
+        })
     }
 
     fn register_defaults(&mut self) {

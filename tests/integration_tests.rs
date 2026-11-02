@@ -353,3 +353,34 @@ fn all_themes_have_required_color_roles() {
         }
     }
 }
+
+#[test]
+fn configured_color_level_is_used_unless_cli_overrides_it() {
+    use std::io::Write;
+    use std::process::{Command, Stdio};
+    let path =
+        std::env::temp_dir().join(format!("ai-statusline-color-{}.toml", std::process::id()));
+    std::fs::write(&path, "color_level = \"none\"\n").unwrap();
+    for (override_level, expect_color) in [(None, false), (Some("truecolor"), true)] {
+        let mut command = Command::new(env!("CARGO_BIN_EXE_ai-statusline"));
+        command.arg("--config").arg(&path).env_remove("NO_COLOR");
+        if let Some(level) = override_level {
+            command.args(["--color-level", level]);
+        }
+        let mut child = command
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn()
+            .unwrap();
+        child
+            .stdin
+            .take()
+            .unwrap()
+            .write_all(br#"{"model":{"display_name":"Test"}}"#)
+            .unwrap();
+        let output = child.wait_with_output().unwrap();
+        assert!(output.status.success());
+        assert_eq!(output.stdout.contains(&0x1b), expect_color);
+    }
+    std::fs::remove_file(path).unwrap();
+}

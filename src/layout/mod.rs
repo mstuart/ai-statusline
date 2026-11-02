@@ -122,20 +122,21 @@ impl<'a> LayoutEngine<'a> {
         for (i, (output, wc)) in widgets.iter().enumerate() {
             let need_separator = i > 0 && !widgets[i - 1].1.merge_next;
 
+            let padding = wc.padding.as_deref().unwrap_or(&config.default_padding);
+            let widget_width = output.display_width + UnicodeWidthStr::width(padding) * 2;
+            let sep_width = if need_separator {
+                UnicodeWidthStr::width(separator.as_str())
+            } else {
+                0
+            };
+            if total_display_width + sep_width + widget_width > max_width {
+                break;
+            }
             if need_separator {
-                let sep_width = UnicodeWidthStr::width(separator.as_str());
-                if total_display_width + sep_width + output.display_width > max_width {
-                    break;
-                }
                 parts.push(separator.clone());
                 total_display_width += sep_width;
             }
 
-            if total_display_width + output.display_width > max_width {
-                break;
-            }
-
-            let padding = wc.padding.as_deref().unwrap_or(&config.default_padding);
             let styled = self.apply_style(&output.text, wc, output);
             parts.push(format!("{padding}{styled}{padding}"));
             total_display_width += output.display_width + UnicodeWidthStr::width(padding) * 2;
@@ -170,6 +171,11 @@ impl<'a> LayoutEngine<'a> {
         }
 
         let flex_width = max_width.saturating_sub(fixed_width);
+        let flex_count = widgets
+            .iter()
+            .filter(|(_, wc)| wc.widget_type == "flex-separator")
+            .count();
+        let mut flex_index = 0;
 
         // Second pass: build output
         let mut parts: Vec<String> = Vec::new();
@@ -177,7 +183,19 @@ impl<'a> LayoutEngine<'a> {
             if wc.widget_type == "flex-separator" {
                 // output.text holds the fill character
                 let fill_char = &output.text;
-                let fill = fill_char.repeat(flex_width);
+                let width =
+                    flex_width / flex_count + usize::from(flex_index < flex_width % flex_count);
+                flex_index += 1;
+                let pattern_width = UnicodeWidthStr::width(fill_char.as_str());
+                let fill = if let Some(repetitions) = width.checked_div(pattern_width) {
+                    format!(
+                        "{}{}",
+                        fill_char.repeat(repetitions),
+                        " ".repeat(width % pattern_width)
+                    )
+                } else {
+                    " ".repeat(width)
+                };
                 let styled = self.apply_style(&fill, wc, output);
                 parts.push(styled);
                 continue;
@@ -489,22 +507,107 @@ impl<'a> LayoutEngine<'a> {
 }
 
 /// Strip ANSI escape sequences from a string for display width calculation.
-fn strip_ansi(s: &str) -> String {
+pub(crate) fn strip_ansi(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
-    let mut in_escape = false;
-    for ch in s.chars() {
-        if in_escape {
-            if ch.is_ascii_alphabetic() {
-                in_escape = false;
+    let mut chars = s.chars();
+    while let Some(ch) = chars.next() {
+        if ch != '\x1b' {
+            out.push(ch);
+            continue;
+        }
+        match chars.next() {
+            Some('[') => {
+                for ch in chars.by_ref() {
+                    if ('@'..='~').contains(&ch) {
+                        break;
+                    }
+                }
             }
-            continue;
+            Some(']') => {
+                let mut escaped = false;
+                for ch in chars.by_ref() {
+                    if ch == '\x07' || (escaped && ch == '\\') {
+                        break;
+                    }
+                    escaped = ch == '\x1b';
+                }
+            }
+            _ => {}
         }
-        if ch == '\x1b' {
-            in_escape = true;
-            continue;
-        }
-        // Skip OSC sequences (\x1b]...\x07)
-        out.push(ch);
     }
     out
+}
+
+#[cfg(test)]
+mod maintenance_tests {
+    use super::*;
+    use crate::config::LineWidgetConfig;
+    use crate::render::ColorLevel;
+
+    fn output(text: &str, width: usize) -> WidgetOutput {
+        WidgetOutput {
+            text: text.into(),
+            display_width: width,
+            priority: 50,
+            visible: true,
+            color_hint: None,
+        }
+    }
+
+    fn widget(kind: &str) -> LineWidgetConfig {
+        serde_json::from_value(serde_json::json!({"type": kind})).unwrap()
+    }
+
+    #[test]
+    fn padding_is_included_before_accepting_a_widget() {
+        let config = Config::default();
+        let renderer = Renderer {
+            color_level: ColorLevel::None,
+        };
+        let engine = LayoutEngine::new(&config, &renderer);
+        let wc = widget("custom-text");
+        let widgets = vec![(output("abc", 3), &wc)];
+        assert_eq!(engine.assemble_line(&widgets, 4), "");
+        assert_eq!(engine.assemble_line(&widgets, 5), " abc ");
+    }
+
+    #[test]
+    fn rejected_widget_does_not_leave_a_trailing_separator() {
+        let mut config = Config::default();
+        config.default_padding.clear();
+        config.default_separator = " | ".into();
+        let renderer = Renderer {
+            color_level: ColorLevel::None,
+        };
+        let engine = LayoutEngine::new(&config, &renderer);
+        let first = widget("custom-text");
+        let mut second = widget("custom-text");
+        second.padding = Some(" ".into());
+        let widgets = vec![(output("a", 1), &first), (output("b", 1), &second)];
+        assert_eq!(engine.assemble_line(&widgets, 5), "a");
+    }
+
+    #[test]
+    fn flex_fill_uses_terminal_cells_and_shares_multiple_gaps() {
+        let mut config = Config::default();
+        config.default_padding.clear();
+        config.default_separator.clear();
+        let renderer = Renderer {
+            color_level: ColorLevel::None,
+        };
+        let engine = LayoutEngine::new(&config, &renderer);
+        let wc = widget("custom-text");
+        let flex = widget("flex-separator");
+        let widgets = vec![
+            (output("a", 1), &wc),
+            (output("界", 0), &flex),
+            (output("b", 1), &wc),
+            (output("--", 0), &flex),
+            (output("c", 1), &wc),
+        ];
+        let line = engine.assemble_line(&widgets, 12);
+        assert_eq!(UnicodeWidthStr::width(line.as_str()), 12);
+        assert!(line.starts_with("a界界 "));
+        assert!(line.ends_with("b----c"));
+    }
 }

@@ -1,5 +1,6 @@
 use super::data::SessionData;
 use super::traits::{Widget, WidgetConfig, WidgetOutput};
+use sha2::{Digest, Sha256};
 use std::fs;
 use std::process::Command;
 use std::time::{Duration, SystemTime};
@@ -7,11 +8,7 @@ use std::time::{Duration, SystemTime};
 pub struct CustomCommandWidget;
 
 fn cache_path(command: &str) -> std::path::PathBuf {
-    let hash: String = command
-        .bytes()
-        .take(16)
-        .map(|b| format!("{b:02x}"))
-        .collect();
+    let hash = hex::encode(Sha256::digest(command.as_bytes()));
     std::path::PathBuf::from(format!("/tmp/ai-statusline-cmd-{hash}"))
 }
 
@@ -96,5 +93,18 @@ impl Widget for CustomCommandWidget {
             visible: true,
             color_hint: None,
         }
+    }
+}
+
+#[cfg(test)]
+mod maintenance_tests {
+    use super::*;
+
+    #[test]
+    fn commands_with_a_shared_prefix_have_distinct_caches() {
+        assert_ne!(
+            cache_path("printf 'shared: alpha'"),
+            cache_path("printf 'shared: bravo'")
+        );
     }
 }

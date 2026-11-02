@@ -897,3 +897,48 @@ fn unknown_widget_returns_none() {
     let result = registry.render("nonexistent-widget", &data, &config);
     assert!(result.is_none());
 }
+
+#[test]
+fn unicode_and_ansi_widgets_report_terminal_cell_width() {
+    let registry = WidgetRegistry::new();
+    let data = empty_session();
+    let mut config = default_config();
+    for text in [
+        "界e\u{301}",
+        "\x1b[31m界\x1b[0m",
+        "\x1b]8;;https://example.test\x07界\x1b]8;;\x07",
+        "\x1b]8;;https://example.test\x1b\\界\x1b]8;;\x1b\\",
+    ] {
+        config.metadata.insert("text".into(), text.into());
+        let output = registry.render("custom-text", &data, &config).unwrap();
+        let expected = if text == "界e\u{301}" { 3 } else { 2 };
+        assert_eq!(output.display_width, expected, "{text:?}");
+    }
+}
+
+#[test]
+fn main_repository_subdirectories_are_not_linked_worktrees() {
+    use std::process::Command;
+    let root = std::env::temp_dir().join(format!(
+        "ai-statusline-worktree-test-{}",
+        std::process::id()
+    ));
+    std::fs::create_dir_all(root.join("nested")).unwrap();
+    assert!(
+        Command::new("git")
+            .args(["init", "--quiet"])
+            .arg(&root)
+            .status()
+            .unwrap()
+            .success()
+    );
+    let data = SessionData {
+        cwd: Some(root.join("nested").to_string_lossy().into_owned()),
+        ..Default::default()
+    };
+    let output = WidgetRegistry::new()
+        .render("git-worktree", &data, &default_config())
+        .unwrap();
+    std::fs::remove_dir_all(root).unwrap();
+    assert!(!output.visible);
+}

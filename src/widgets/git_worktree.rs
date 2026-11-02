@@ -46,7 +46,7 @@ impl Widget for GitWorktreeWidget {
             });
 
         let git_common_dir = Command::new("git")
-            .args(["rev-parse", "--git-common-dir"])
+            .args(["rev-parse", "--path-format=absolute", "--git-common-dir"])
             .current_dir(&dir)
             .output()
             .ok()

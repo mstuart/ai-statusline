@@ -25,8 +25,8 @@ struct Cli {
     config: Option<String>,
 
     /// Color level override: auto, none, 16, 256, truecolor
-    #[arg(long, default_value = "auto")]
-    color_level: String,
+    #[arg(long)]
+    color_level: Option<String>,
 }
 
 fn main() {
@@ -50,7 +50,7 @@ fn render_statusline(cli: &Cli) {
     };
 
     let config = Config::load(cli.config.as_deref());
-    let renderer = Renderer::detect(&cli.color_level);
+    let renderer = Renderer::detect(cli.color_level.as_deref().unwrap_or(&config.color_level));
     let registry = WidgetRegistry::new();
     let engine = LayoutEngine::new(&config, &renderer);
 
