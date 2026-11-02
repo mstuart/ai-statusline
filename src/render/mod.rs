@@ -108,7 +108,7 @@ impl Renderer {
             "brightMagenta" | "bright_magenta" => ColorSpec::Named("brightMagenta".into()),
             "brightCyan" | "bright_cyan" => ColorSpec::Named("brightCyan".into()),
             "brightWhite" | "bright_white" => ColorSpec::Named("brightWhite".into()),
-            s if s.starts_with('#') && s.len() == 7 => {
+            s if s.starts_with('#') && s.len() == 7 && s.is_ascii() => {
                 let r = u8::from_str_radix(&s[1..3], 16).unwrap_or(0);
                 let g = u8::from_str_radix(&s[3..5], 16).unwrap_or(0);
                 let b = u8::from_str_radix(&s[5..7], 16).unwrap_or(0);
@@ -221,5 +221,17 @@ impl Renderer {
         let gi = (g as u16 * 5 / 255) as u8;
         let bi = (b as u16 * 5 / 255) as u8;
         16 + 36 * ri + 6 * gi + bi
+    }
+}
+
+#[cfg(test)]
+mod maintenance_tests {
+    use super::*;
+
+    #[test]
+    fn malformed_unicode_color_falls_back_without_panicking() {
+        assert!(
+            matches!(Renderer::parse_color("#ab界1"), ColorSpec::Named(name) if name == "white")
+        );
     }
 }
